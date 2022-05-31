@@ -1,8 +1,15 @@
+import { useState, MouseEvent } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
+    const [activeBtn, setActiveBtn] = useState<string>("");
+
+    function handleActiveBtn(e: MouseEvent<HTMLButtonElement>) {
+        setActiveBtn(e.currentTarget.innerText);
+    }
+
     return (
         <div className={styles.container}>
             <Head>
@@ -16,9 +23,15 @@ const Home: NextPage = () => {
                 </h1>
             </section>
             <section className={styles.mainMenuBtns}>
-                <button>Play</button>
-                <button>Leaderboards</button>
-                <button>Info</button>
+                <button
+                    onClick={handleActiveBtn}
+                    className={activeBtn === "Play" ? `${styles.active}` : ""}
+                >
+                    Play
+                </button>
+                {activeBtn === "play" && <></>}
+                <button onClick={handleActiveBtn}>Leaderboards</button>
+                <button onClick={handleActiveBtn}>Info</button>
             </section>
         </div>
     );
