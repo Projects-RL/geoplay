@@ -1,6 +1,7 @@
 import { useState, MouseEvent } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -23,12 +24,16 @@ const Home: NextPage = () => {
                 </h1>
             </section>
             <section className={styles.mainMenuBtns}>
-                <button
-                    onClick={handleActiveBtn}
-                    className={activeBtn === "Play" ? `${styles.active}` : ""}
-                >
-                    Play
-                </button>
+                <Link href="/play">
+                    <button
+                        onClick={handleActiveBtn}
+                        className={
+                            activeBtn === "Play" ? `${styles.active}` : ""
+                        }
+                    >
+                        Play
+                    </button>
+                </Link>
                 {activeBtn === "play" && <></>}
                 <button onClick={handleActiveBtn}>Leaderboards</button>
                 <button onClick={handleActiveBtn}>Info</button>
