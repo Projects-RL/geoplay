@@ -3,15 +3,16 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import naJSON from "../../geojson/NA.geo.json";
-import { QuizData } from "../../types";
 
 function GamePage() {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
-    const [hoverId, setHoverId] = useState<any>(null);
+    const [clickedCountries, setClickedCountries] = useState<String[]>([]);
+    let hoveredCountryId: any = null;
 
     useEffect(() => {
         if (map.current) return;
+
         map.current = new mapboxgl.Map({
             accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
             container: mapContainer.current!,
@@ -19,75 +20,105 @@ function GamePage() {
         });
 
         map.current.on("load", () => {
-            map.current?.addSource("custom-poly", {
+            console.log(map.current?.isStyleLoaded());
+            map.current?.addSource("countries", {
                 type: "geojson",
                 data: naJSON as any,
                 generateId: true,
             });
+
+            // Whn the style has loaded, this code will run
+            map.current?.on("styledata", () => {
+                // here we check if the layer already exists we cancel the function
+                if (map.current?.getLayer("country-fills")) return;
+                map.current?.addLayer({
+                    id: "country-fills",
+                    type: "fill",
+                    source: "countries",
+                    layout: {},
+                    paint: {
+                        // "fill-color": "#000",
+                        "fill-color": [
+                            "case",
+                            // ["boolean", ["feature-state", "clicked"]],
+                            // "#04ff86",
+                            ["boolean", ["feature-state", "hover"], false],
+                            "#fff",
+                            "#000",
+                        ],
+                        "fill-opacity": 0.5,
+                    },
+                });
+
+                // if(clicked && answer){
+                //     color: 'green'
+                // } else if(clicked && !answer){
+                //     color: 'red'
+                // } else if(!clicked) {
+                // color: 'nothing'
+                // }
+
+                map.current?.addLayer({
+                    id: "borders",
+                    type: "line",
+                    source: "countries",
+                    layout: {},
+                    paint: {
+                        "line-color": "#ECA400",
+                        "line-width": 2,
+                    },
+                });
+
+                map.current?.on("click", "country-fills", pickCountry);
+            });
         });
-
-        // map.current.on("data", onStyleData);
-        // console.log("style is still loading...");
-    }, []);
-
-    if (map.current) {
-        if (map.current.isStyleLoaded()) {
-            map.current.addLayer({
-                id: "country-fills",
-                type: "fill",
-                source: "custom-poly",
-                layout: {},
-                paint: {
-                    "fill-color": "#627BC1",
-                    "fill-opacity": [
-                        "case",
-                        ["boolean", ["feature-state", "hover"], false],
-                        1,
-                        0.5,
-                    ],
-                },
-            });
-            map.current.addLayer({
-                id: "borders",
-                type: "line",
-                source: "custom-poly",
-                layout: {},
-                paint: {
-                    "line-color": "#000",
-                    "line-width": 3,
-                },
-            });
-
-            map.current.on("mousemove", "country-fills", (e: any) => {
-                // console.log(e.features[0]);
-                console.log(hoverId);
-
-                if (e.features?.length > 0) {
-                    if (hoverId !== null) {
-                        map.current?.setFeatureState(
-                            { source: "custom-poly", id: hoverId },
-                            { hover: false }
-                        );
-                    }
-                    setHoverId(e.features[0].id);
+        map.current?.on("mousemove", "country-fills", (e: any) => {
+            if (e.features.length > 0) {
+                if (hoveredCountryId) {
                     map.current?.setFeatureState(
-                        { source: "custom-poly", id: hoverId },
-                        { hover: true }
-                    );
-                }
-            });
-
-            map.current.on("mouseleave", "country-fills", () => {
-                if (hoverId !== null) {
-                    map.current?.setFeatureState(
-                        { source: "custom-poly", id: hoverId },
+                        { source: "countries", id: hoveredCountryId },
                         { hover: false }
                     );
                 }
-                setHoverId(null);
-            });
-        }
+                hoveredCountryId = e.features[0].id;
+                map.current?.setFeatureState(
+                    { source: "countries", id: hoveredCountryId },
+                    { hover: true }
+                );
+            }
+        });
+        map.current?.on("mouseleave", "country-fills", () => {
+            if (hoveredCountryId !== null) {
+                map.current?.setFeatureState(
+                    { source: "countries", id: hoveredCountryId },
+                    { hover: false }
+                );
+            }
+            hoveredCountryId = null;
+        });
+    }, []);
+
+    function pickCountry(e: any) {
+        console.log(e.features[0].properties.name);
+        const countryID = e.features[0].id;
+        const countryName = e.features[0].properties.name;
+
+        map.current?.setFeatureState(
+            { source: "countries", id: countryID },
+            {
+                clicked: true,
+            }
+        );
+
+        const countryObj = {
+            countryID,
+            countryName,
+        };
+        setClickedCountries((prevValue: any) => {
+            return [...prevValue, countryObj];
+        });
     }
+
     return <div ref={mapContainer} className={styles.container}></div>;
 }
 
