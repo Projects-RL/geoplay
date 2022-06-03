@@ -4,14 +4,16 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import naJSON from "../../geojson/NA.geo.json";
 import MyApp from "../_app";
+import { Bool } from "reselect/es/types";
 
 function GamePage() {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const [clickedCountries, setClickedCountries] = useState<String[]>([]);
-    const [bajs, setBajs] = useState(true);
+    const [correctCountries, setCorrectCountries] = useState<String[]>([]);
     const [countriesList, setCountriesList] = useState<String[]>([]);
-    const [answer, setAnswer] = useState("");
+    const [answer, setAnswer] = useState<string>("");
+    const [gameIsOver, setGameIsOver] = useState<boolean>(false);
     let hoveredCountryId: any = null;
 
     function populateCountries() {
@@ -127,6 +129,9 @@ function GamePage() {
         if (!pickedCountry) return;
         if (pickedCountry.countryName === correctCountry) {
             setAnswer("correct");
+            setCorrectCountries((prevValue: any) => {
+                return [...prevValue, correctCountry];
+            });
         } else {
             setAnswer("incorrect");
             setTimeout(() => {
@@ -138,6 +143,8 @@ function GamePage() {
     useEffect(() => {
         const index = clickedCountries.length;
         const pickedCountry: any = clickedCountries[index - 1];
+        if (!pickedCountry) return;
+
         if (answer === "correct") {
             map.current?.setFeatureState(
                 { source: "countries", id: pickedCountry.countryID },
@@ -145,6 +152,10 @@ function GamePage() {
                     answer: answer,
                 }
             );
+        }
+        if (correctCountries.includes(pickedCountry.countryName)) {
+            console.log("finns redan");
+            return;
         }
         if (answer === "incorrect") {
             map.current?.setFeatureState(
@@ -164,6 +175,14 @@ function GamePage() {
         }
         setAnswer("");
     }, [answer]);
+
+    if (
+        countriesList.length > 0 &&
+        countriesList.length === clickedCountries.length
+    ) {
+        console.log("spelet är slut");
+        setGameIsOver(true);
+    }
 
     return <div ref={mapContainer} className={styles.container}></div>;
 }
