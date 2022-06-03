@@ -11,14 +11,13 @@ function GamePage() {
     const [clickedCountries, setClickedCountries] = useState<String[]>([]);
     const [bajs, setBajs] = useState(true);
     const [countriesList, setCountriesList] = useState<String[]>([]);
+    const [answer, setAnswer] = useState("");
     let hoveredCountryId: any = null;
 
     function populateCountries() {
         const countries = naJSON.features.map((country) => {
             return country.properties.name;
         });
-        console.log(countries);
-
         setCountriesList(countries);
     }
 
@@ -32,7 +31,6 @@ function GamePage() {
         });
 
         map.current.on("load", () => {
-            console.log(map.current?.isStyleLoaded());
             map.current?.addSource("countries", {
                 type: "geojson",
                 data: naJSON as any,
@@ -51,10 +49,12 @@ function GamePage() {
                     paint: {
                         "fill-color": [
                             "case",
-                            ["==", ["feature-state", "correct"], true], // if correct == true
+                            ["==", ["feature-state", "answer"], "correct"], // if correct == true
                             "#04ff86", // ...then color the polygon this color
-                            ["==", ["feature-state", "correct"], false], // if correct == false
+                            ["==", ["feature-state", "answer"], "incorrect"], // if correct == false
                             "#e51b0e", // ...then color the polygon this color
+                            ["==", ["feature-state", "answer"], "changeBack"], // if turnBack == true
+                            "#000", // ...then color the polygon black
                             ["==", ["feature-state", "hover"], true], // if the polygon is being hovered over
                             "#fff", // ...then color the polygon white
                             "#000", // this is the fallback value if neither of the cases above happens
@@ -101,7 +101,6 @@ function GamePage() {
         });
         map.current.on("click", "country-fills", (e: any) => {
             if (!countriesList) return;
-            console.log("hej");
 
             const countryID = e.features[0].id;
             const countryName = e.features[0].properties.name;
@@ -123,26 +122,48 @@ function GamePage() {
     useEffect(() => {
         const index = clickedCountries.length;
         const pickedCountry: any = clickedCountries[index - 1];
-        const correctCountry = countriesList[index];
+        const correctCountry = countriesList[index - 1];
 
         if (!pickedCountry) return;
-
         if (pickedCountry.countryName === correctCountry) {
-            map.current?.setFeatureState(
-                { source: "countries", id: pickedCountry.countryID },
-                {
-                    correct: true,
-                }
-            );
+            setAnswer("correct");
         } else {
+            setAnswer("incorrect");
+            setTimeout(() => {
+                setAnswer("changeBack");
+            }, 1000);
+        }
+    }, [clickedCountries]);
+
+    useEffect(() => {
+        const index = clickedCountries.length;
+        const pickedCountry: any = clickedCountries[index - 1];
+        if (answer === "correct") {
             map.current?.setFeatureState(
                 { source: "countries", id: pickedCountry.countryID },
                 {
-                    correct: false,
+                    answer: answer,
                 }
             );
         }
-    }, [clickedCountries]);
+        if (answer === "incorrect") {
+            map.current?.setFeatureState(
+                { source: "countries", id: pickedCountry.countryID },
+                {
+                    answer: answer,
+                }
+            );
+        }
+        if (answer === "changeBack") {
+            map.current?.setFeatureState(
+                { source: "countries", id: pickedCountry.countryID },
+                {
+                    answer: answer,
+                }
+            );
+        }
+        setAnswer("");
+    }, [answer]);
 
     return <div ref={mapContainer} className={styles.container}></div>;
 }
