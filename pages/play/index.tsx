@@ -3,8 +3,6 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import naJSON from "../../geojson/NA.geo.json";
-import MyApp from "../_app";
-import { Bool } from "reselect/es/types";
 
 function GamePage() {
     const mapContainer = useRef<HTMLDivElement>(null);
@@ -55,8 +53,6 @@ function GamePage() {
                             "#04ff86", // ...then color the polygon this color
                             ["==", ["feature-state", "answer"], "incorrect"], // if correct == false
                             "#e51b0e", // ...then color the polygon this color
-                            ["==", ["feature-state", "answer"], "changeBack"], // if turnBack == true
-                            "#000", // ...then color the polygon black
                             ["==", ["feature-state", "hover"], true], // if the polygon is being hovered over
                             "#fff", // ...then color the polygon white
                             "#000", // this is the fallback value if neither of the cases above happens
@@ -86,6 +82,7 @@ function GamePage() {
                     );
                 }
                 hoveredCountryId = e.features[0].id;
+                console.log(hoveredCountryId);
                 map.current?.setFeatureState(
                     { source: "countries", id: hoveredCountryId },
                     { hover: true }
@@ -118,9 +115,6 @@ function GamePage() {
         populateCountries();
     }, []);
 
-    if (map.current) {
-    }
-
     useEffect(() => {
         const index = clickedCountries.length;
         const pickedCountry: any = clickedCountries[index - 1];
@@ -136,7 +130,7 @@ function GamePage() {
             setAnswer("incorrect");
             setTimeout(() => {
                 setAnswer("changeBack");
-            }, 1000);
+            }, 200);
         }
     }, [clickedCountries]);
 
@@ -173,7 +167,9 @@ function GamePage() {
                 }
             );
         }
+
         setAnswer("");
+        hoveredCountryId = null;
     }, [answer]);
 
     if (
@@ -183,7 +179,6 @@ function GamePage() {
         console.log("spelet är slut");
         setGameIsOver(true);
     }
-
     return <div ref={mapContainer} className={styles.container}></div>;
 }
 
