@@ -74,7 +74,14 @@ function GamePage() {
                 });
             });
         });
+        map.current?.on("mouseenter", "country-fills", () => {
+            if (!map.current) return;
+            map.current.getCanvas().style.cursor = "pointer";
+        });
+
         map.current?.on("mousemove", "country-fills", (e: any) => {
+            // map.current?.getCanvas().style.cursor = 'pointer'
+
             if (e.features.length > 0) {
                 if (hoveredCountryId) {
                     map.current?.setFeatureState(
@@ -90,8 +97,10 @@ function GamePage() {
             }
         });
         map.current?.on("mouseleave", "country-fills", () => {
+            if (!map.current) return;
+            map.current.getCanvas().style.cursor = "";
             if (hoveredCountryId !== null) {
-                map.current?.setFeatureState(
+                map.current.setFeatureState(
                     { source: "countries", id: hoveredCountryId },
                     { hover: false }
                 );
