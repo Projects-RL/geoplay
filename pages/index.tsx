@@ -15,6 +15,8 @@ const Home: NextPage = () => {
         }
     }
 
+    console.log("dev");
+
     return (
         <div className={style.container}>
             <Head>
