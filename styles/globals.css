@@ -1,5 +1,13 @@
 @import url("https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap");
 
+:root {
+    --orange: #eca400;
+    --yellow: #eaf8bf;
+    --lightBlue: #006992;
+    --mediumBlue: #27476e;
+    --darkBlue: #001d4a;
+}
+
 html,
 body {
     padding: 0;
@@ -12,6 +20,13 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+}
+
+p {
+    font-family: "Norwester";
+    font-style: normal;
+    font-weight: 400;
+    color: #eaf8bf;
 }
 
 * {
