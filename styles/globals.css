@@ -29,6 +29,17 @@ p {
     color: #eaf8bf;
 }
 
+button {
+    font-family: "Norwester";
+    font-style: normal;
+    font-weight: 400;
+    color: #eaf8bf;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
 * {
     box-sizing: border-box;
 }

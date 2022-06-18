@@ -1,4 +1,5 @@
-import React, { useState, MouseEvent, ChangeEventHandler } from "react";
+import React, { useState, MouseEvent } from "react";
+import Link from "next/link";
 import style from "../styles/SmallMenu.module.css";
 import { AiFillCaretUp } from "react-icons/ai";
 
@@ -67,7 +68,9 @@ function SmallMenu() {
                 <button>Countries</button>
                 <button>Capitals</button>
             </div>
-            <button className={style.readyBtn}>Ready</button>
+            <Link href="/play">
+                <button className={style.readyBtn}>Ready</button>
+            </Link>
         </div>
     );
 }

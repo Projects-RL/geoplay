@@ -59,8 +59,9 @@
 }
 
 .dropdown button {
+    border: none;
+    background: #006992;
     width: 90%;
-    height: 30px;
     border-radius: 3px;
     margin: 0.2rem 0 0.2rem 0;
     font-size: 16px;
@@ -68,6 +69,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0.2rem;
 }
 
 .dropdown button:hover {
@@ -76,6 +78,8 @@
 
 .toggleBtns button,
 .container .readyBtn {
+    border: none;
+    background: #006992;
     width: 75px;
     height: 31px;
     border-radius: 5px;
@@ -113,7 +117,7 @@
     height: 100vh;
     position: absolute;
     top: -385%;
-    z-index: 9;
+    z-index: 5;
 }
 
 /* Scrollbar */

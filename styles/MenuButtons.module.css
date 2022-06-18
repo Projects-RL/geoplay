@@ -1,0 +1,34 @@
+.mainMenuBtns {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mainMenuBtns .menuBtn {
+    width: 276px;
+    height: 66px;
+    background: #006992;
+    border-radius: 10px;
+    border: none;
+    font-family: "Norwester";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 43px;
+    color: #eaf8bf;
+    margin: 0.5rem 0 0.5rem 0;
+    transform: translateY(0px);
+    transition: 0.3s all;
+    z-index: 6;
+}
+
+.mainMenuBtns .menuBtn:hover {
+    cursor: pointer;
+    box-shadow: 2px 6px 2px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+.active {
+    box-shadow: 2px 6px 2px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px) !important;
+}
