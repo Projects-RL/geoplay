@@ -102,6 +102,17 @@
     margin: 0 0 1rem 0;
 }
 
+.toggleBtns button {
+    box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+    color: rgba(234, 248, 191, 0.35);
+}
+
+.toggleBtns .toggled {
+    border: 2px solid #eca400;
+    box-shadow: none;
+    color: #eaf8bf;
+}
+
 .toggleBtns button:nth-child(1) {
     font-size: 15px;
 }
@@ -110,6 +121,8 @@
 }
 .container .readyBtn {
     font-size: 20px;
+    background: #eaf8bf;
+    color: #006992;
 }
 
 .closer {

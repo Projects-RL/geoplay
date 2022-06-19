@@ -23,17 +23,7 @@ function MenuButtons() {
             >
                 Play
             </button>
-            {activeBtn === "Play" && (
-                <SmallMenu />
-                // <div>
-                //     <div>Europe</div>
-                //     <div>
-                //         <button>Countries</button>
-                //         <button>Capitals</button>
-                //     </div>
-                //     <button>Ready</button>
-                // </div>
-            )}
+            {activeBtn === "Play" && <SmallMenu />}
             <button className={style.menuBtn} onClick={handleActiveBtn}>
                 Leaderboards
             </button>

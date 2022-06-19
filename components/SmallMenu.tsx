@@ -6,6 +6,7 @@ import { AiFillCaretUp } from "react-icons/ai";
 function SmallMenu() {
     const [inputClick, setInputClick] = useState<boolean>(false);
     const [chosenCountry, setChosenCountry] = useState<string>("Europe");
+    const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
     const countries: string[] = [
         "Europe",
         "North America",
@@ -65,8 +66,22 @@ function SmallMenu() {
             )}
 
             <div className={style.toggleBtns}>
-                <button>Countries</button>
-                <button>Capitals</button>
+                <button
+                    className={countriesToggled ? `${style.toggled}` : ""}
+                    onClick={() => {
+                        setCountriesToggled(true);
+                    }}
+                >
+                    Countries
+                </button>
+                <button
+                    className={!countriesToggled ? `${style.toggled}` : ""}
+                    onClick={() => {
+                        setCountriesToggled(false);
+                    }}
+                >
+                    Capitals
+                </button>
             </div>
             <Link href="/play">
                 <button className={style.readyBtn}>Ready</button>
