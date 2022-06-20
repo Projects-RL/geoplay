@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import type { NextPage, GetServerSideProps } from "next";
+import type { NextPage, GetServerSideProps, GetStaticProps } from "next";
 import { MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -196,8 +196,7 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
 
 export default GamePage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    // const params: string | undefined = context.params?.continent;
+export const getStaticProps: GetStaticProps = async (context) => {
     if (!context.params) {
         return { props: {} };
     }
@@ -246,5 +245,44 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         props: {
             dataToReturn,
         },
+        revalidate: 1,
     };
 };
+
+export async function getStaticPaths() {
+    const user = process.env.DB_USER;
+    const password = process.env.DB_PASSWORD;
+    const databaseName = process.env.DB_NAME;
+
+    const client = await MongoClient.connect(
+        "mongodb+srv://" +
+            user +
+            ":" +
+            password +
+            "@cluster0.wb3yq.mongodb.net/" +
+            databaseName +
+            "?retryWrites=true&w=majority"
+    );
+
+    const db = client.db();
+    const geojsonData = db.collection("geojsonData");
+
+    const data = await geojsonData.find().toArray();
+
+    let continentsArray: string[] = [];
+    for (const continent of Object.entries(data[0])) {
+        console.log(continent);
+        if (continent[0] !== "_id") {
+            continentsArray.push(continent[1]);
+        }
+    }
+
+    return {
+        fallback: "blocking",
+        paths: continentsArray.map((continent) => ({
+            params: {
+                continent,
+            },
+        })),
+    };
+}
