@@ -273,7 +273,7 @@ export async function getStaticPaths() {
     for (const continent of Object.entries(data[0])) {
         console.log(continent);
         if (continent[0] !== "_id") {
-            continentsArray.push(continent[1]);
+            continentsArray.push(continent[0]);
         }
     }
 
