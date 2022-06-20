@@ -1,10 +1,13 @@
 import React, { useRef, useEffect, useState } from "react";
+import type { NextPage, GetStaticProps } from "next";
+import { MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
-import jsonData from "../../geojson/Europe.json";
+import { QuizData } from "../../types";
+// import jsonData from "../../geojson/Europe.json";
 
-function GamePage() {
+const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const [clickedCountries, setClickedCountries] = useState<String[]>([]);
@@ -16,7 +19,7 @@ function GamePage() {
     let hoveredCountryId: any = null;
 
     function populateCountries() {
-        const countries = jsonData.features.map((country) => {
+        const countries = dataToReturn.features.map((country) => {
             return country.properties.name;
         });
         countriesList.current = countries;
@@ -34,7 +37,7 @@ function GamePage() {
         map.current.on("load", () => {
             map.current?.addSource("countries", {
                 type: "geojson",
-                data: jsonData as any,
+                data: dataToReturn as any,
                 generateId: true,
             });
 
@@ -80,8 +83,6 @@ function GamePage() {
         });
 
         map.current?.on("mousemove", "country-fills", (e: any) => {
-            // map.current?.getCanvas().style.cursor = 'pointer'
-
             if (e.features.length > 0) {
                 if (hoveredCountryId) {
                     map.current?.setFeatureState(
@@ -178,7 +179,6 @@ function GamePage() {
             );
         }
 
-        // setAnswer("");
         hoveredCountryId = null;
     }, [answer]);
 
@@ -193,8 +193,51 @@ function GamePage() {
     console.log(clickedCountries);
 
     return <div ref={mapContainer} className={styles.container}></div>;
-}
+};
 
 export default GamePage;
 
-export async function getStaticProps() {}
+export const getStaticProps: GetStaticProps = async () => {
+    const user = process.env.DB_USER;
+    const password = process.env.DB_PASSWORD;
+    const databaseName = process.env.DB_NAME;
+
+    const client = await MongoClient.connect(
+        "mongodb+srv://" +
+            user +
+            ":" +
+            password +
+            "@cluster0.wb3yq.mongodb.net/" +
+            databaseName +
+            "?retryWrites=true&w=majority"
+    );
+
+    const hej = "europe";
+
+    const db = client.db();
+    const geojsonData = db.collection("geojsonData");
+
+    const data = await geojsonData.find().toArray();
+
+    let dataToFetch: string;
+    for (const continent of Object.entries(data[0])) {
+        if (continent[0] === hej) {
+            dataToFetch = continent[1];
+        }
+    }
+
+    async function fetchJsonData() {
+        const response = await fetch(dataToFetch);
+        const data = await response.json();
+
+        return data;
+    }
+    const dataToReturn = await fetchJsonData();
+
+    return {
+        props: {
+            dataToReturn,
+        },
+        revalidate: 1,
+    };
+};
