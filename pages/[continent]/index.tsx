@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import type { NextPage, GetStaticProps } from "next";
+import type { NextPage, GetServerSideProps } from "next";
 import { MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import { QuizData } from "../../types";
-// import jsonData from "../../geojson/Europe.json";
 
 const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const mapContainer = useRef<HTMLDivElement>(null);
@@ -197,7 +196,18 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
 
 export default GamePage;
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    // const params: string | undefined = context.params?.continent;
+    if (!context.params) {
+        return { props: {} };
+    }
+    const params: string | undefined | string[] = context.params.continent;
+
+    if (typeof params !== "string") {
+        return { props: {} };
+    }
+    const continentString = params?.replace(" ", "");
+
     const user = process.env.DB_USER;
     const password = process.env.DB_PASSWORD;
     const databaseName = process.env.DB_NAME;
@@ -212,8 +222,6 @@ export const getStaticProps: GetStaticProps = async () => {
             "?retryWrites=true&w=majority"
     );
 
-    const hej = "europe";
-
     const db = client.db();
     const geojsonData = db.collection("geojsonData");
 
@@ -221,7 +229,7 @@ export const getStaticProps: GetStaticProps = async () => {
 
     let dataToFetch: string;
     for (const continent of Object.entries(data[0])) {
-        if (continent[0] === hej) {
+        if (continent[0].toLocaleLowerCase() === continentString) {
             dataToFetch = continent[1];
         }
     }
@@ -238,6 +246,5 @@ export const getStaticProps: GetStaticProps = async () => {
         props: {
             dataToReturn,
         },
-        revalidate: 1,
     };
 };
