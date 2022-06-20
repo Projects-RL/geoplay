@@ -281,7 +281,7 @@ export async function getStaticPaths() {
         fallback: "blocking",
         paths: continentsArray.map((continent) => ({
             params: {
-                continent,
+                continent: continent.toString(),
             },
         })),
     };
