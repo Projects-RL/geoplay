@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import type { NextPage, GetServerSideProps, GetStaticProps } from "next";
+import type { NextPage, GetStaticProps } from "next";
 import { MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
