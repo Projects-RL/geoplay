@@ -196,3 +196,5 @@ function GamePage() {
 }
 
 export default GamePage;
+
+export async function getStaticProps() {}
