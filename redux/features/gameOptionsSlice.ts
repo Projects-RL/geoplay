@@ -1,7 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-    continent: "",
+export interface GameOptions {
+    continent: string;
+    gameMode: string;
+    ready: boolean;
+}
+
+const initialState: GameOptions = {
+    continent: "europe",
     gameMode: "countries",
     ready: false,
 };

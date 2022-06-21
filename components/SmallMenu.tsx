@@ -6,7 +6,6 @@ import {
     gameModePick,
     handleReady,
 } from "../redux/features/gameOptionsSlice";
-import Link from "next/link";
 import style from "../styles/SmallMenu.module.css";
 import { AiFillCaretUp } from "react-icons/ai";
 
@@ -45,6 +44,8 @@ function SmallMenu() {
     }
 
     function goToPlayPage() {
+        dispatch(handleReady(true));
+
         router.push("/" + chosenCountry.toLowerCase().replace(" ", ""));
     }
 
@@ -102,11 +103,10 @@ function SmallMenu() {
                     Capitals
                 </button>
             </div>
-            {/* <Link href="/play"> */}
+
             <button className={style.readyBtn} onClick={goToPlayPage}>
                 Ready
             </button>
-            {/* </Link> */}
         </div>
     );
 }

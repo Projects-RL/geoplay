@@ -1,12 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
-import type { NextPage, GetStaticProps } from "next";
+import { useRouter } from "next/router";
 import { MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import { QuizData } from "../../types";
+import { useSelector } from "react-redux";
+
+import type { NextPage, GetStaticProps } from "next";
+import type { RootState } from "../../redux/store";
 
 const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
+    const router = useRouter();
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const [clickedCountries, setClickedCountries] = useState<String[]>([]);
@@ -17,6 +22,10 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const [gameIsOver, setGameIsOver] = useState<boolean>(false);
     let hoveredCountryId: any = null;
 
+    const playerIsReady = useSelector((state: RootState) => {
+        return state.gameOptions.ready;
+    });
+
     function populateCountries() {
         const countries = dataToReturn.features.map((country) => {
             return country.properties.name;
@@ -25,6 +34,9 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     }
 
     useEffect(() => {
+        if (!playerIsReady) {
+            router.push("/");
+        }
         if (map.current) return;
 
         map.current = new mapboxgl.Map({
