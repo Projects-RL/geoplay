@@ -45,7 +45,7 @@ function SmallMenu() {
     }
 
     function goToPlayPage() {
-        router.push("/" + chosenCountry.toLowerCase());
+        router.push("/" + chosenCountry.toLowerCase().replace(" ", ""));
     }
 
     return (
