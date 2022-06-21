@@ -271,14 +271,13 @@ export async function getStaticPaths() {
 
     let continentsArray: string[] = [];
     for (const continent of Object.entries(data[0])) {
-        console.log(continent);
         if (continent[0] !== "_id") {
-            continentsArray.push(continent[0]);
+            continentsArray.push(continent[0].toLocaleLowerCase());
         }
     }
 
     return {
-        fallback: "blocking",
+        fallback: false,
         paths: continentsArray.map((continent) => ({
             params: {
                 continent: continent.toString(),
