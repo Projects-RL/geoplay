@@ -18,6 +18,12 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const [correctCountries, setCorrectCountries] = useState<String[]>([]);
     const countriesList = useRef<String[]>([]);
     const [answer, setAnswer] = useState<string>("");
+    const coords = useSelector((state: RootState) => {
+        return state.gameOptions.coordinates;
+    });
+    const zoomLevel = useSelector((state: RootState) => {
+        return state.gameOptions.zoom;
+    });
 
     const [gameIsOver, setGameIsOver] = useState<boolean>(false);
     let hoveredCountryId: any = null;
@@ -43,6 +49,8 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
             accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
             container: mapContainer.current!,
             style: "mapbox://styles/tjorben/cl3t89ay5000615knxkcvfr67",
+            center: [coords.lng, coords.lat],
+            zoom: zoomLevel,
         });
 
         map.current.on("load", () => {

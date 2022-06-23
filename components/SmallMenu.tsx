@@ -4,10 +4,14 @@ import { useDispatch } from "react-redux";
 import {
     continentPick,
     gameModePick,
+    handleCoords,
     handleReady,
+    handleZoom,
 } from "../redux/features/gameOptionsSlice";
 import style from "../styles/SmallMenu.module.css";
 import { AiFillCaretUp } from "react-icons/ai";
+import { Coords } from "../interfaces";
+import { continents } from "../continents";
 
 function SmallMenu() {
     const dispatch = useDispatch();
@@ -15,15 +19,6 @@ function SmallMenu() {
     const [inputClick, setInputClick] = useState<boolean>(false);
     const [chosenCountry, setChosenCountry] = useState<string>("Europe");
     const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
-    const countries: string[] = [
-        "Europe",
-        "North America",
-        "South America",
-        "Asia",
-        "Africa",
-        "Oceania",
-        "World",
-    ];
 
     function handleInputClick() {
         setInputClick((prevValue) => {
@@ -31,7 +26,11 @@ function SmallMenu() {
         });
     }
 
-    function handleChosenCountry(e: MouseEvent<HTMLButtonElement>) {
+    function handleChosenCountry(
+        e: MouseEvent<HTMLButtonElement>,
+        coords: Coords,
+        zoom: number
+    ) {
         const btnElement = e.target as HTMLButtonElement;
         setChosenCountry(btnElement.innerText);
         setInputClick(false);
@@ -41,6 +40,8 @@ function SmallMenu() {
             .replace(" ", "");
 
         dispatch(continentPick(stateToStore));
+        dispatch(handleCoords(coords));
+        dispatch(handleZoom(zoom));
     }
 
     function goToPlayPage() {
@@ -63,14 +64,20 @@ function SmallMenu() {
             </div>
             {inputClick && (
                 <div className={style.dropdown}>
-                    {countries.map((country) => {
+                    {continents.map((continent) => {
                         return (
                             <button
-                                key={country}
+                                key={continent.name}
                                 className={style.countryChoice}
-                                onClick={handleChosenCountry}
+                                onClick={(e) =>
+                                    handleChosenCountry(
+                                        e,
+                                        continent.coords,
+                                        continent.zoom
+                                    )
+                                }
                             >
-                                {country}
+                                {continent.name}
                             </button>
                         );
                     })}
