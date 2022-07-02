@@ -12,6 +12,7 @@ import style from "../styles/SmallMenu.module.css";
 import { AiFillCaretUp } from "react-icons/ai";
 import { Coords } from "../interfaces";
 import { continents } from "../continents";
+import LoadingDots from "./LoadingDots";
 
 function SmallMenu() {
     const dispatch = useDispatch();
@@ -19,6 +20,7 @@ function SmallMenu() {
     const [inputClick, setInputClick] = useState<boolean>(false);
     const [chosenCountry, setChosenCountry] = useState<string>("Europe");
     const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     function handleInputClick() {
         setInputClick((prevValue) => {
@@ -45,8 +47,8 @@ function SmallMenu() {
     }
 
     function goToPlayPage() {
+        setIsLoading(true);
         dispatch(handleReady(true));
-
         router.push("/" + chosenCountry.toLowerCase().replace(" ", ""));
     }
 
@@ -112,7 +114,7 @@ function SmallMenu() {
             </div>
 
             <button className={style.readyBtn} onClick={goToPlayPage}>
-                Ready
+                {isLoading ? <LoadingDots /> : <>Ready</>}
             </button>
         </div>
     );
