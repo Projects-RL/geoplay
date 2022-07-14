@@ -12,8 +12,8 @@ const Home: NextPage = () => {
             </Head>
             <section className={style.header}>
                 <h1>
-                    <span>Geo</span>
-                    <span>Play</span>
+                    <span role="heading">Geo</span>
+                    <span role="heading">Play</span>
                 </h1>
             </section>
             <MenuButtons />
