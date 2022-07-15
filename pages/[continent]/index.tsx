@@ -9,11 +9,13 @@ import { useSelector } from "react-redux";
 
 import type { NextPage, GetStaticProps } from "next";
 import type { RootState } from "../../redux/store";
+import Objective from "../../components/Objective";
 
 const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const router = useRouter();
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
+    const [iteration, setIteration] = useState<number>();
     const [clickedCountries, setClickedCountries] = useState<String[]>([]);
     const [correctCountries, setCorrectCountries] = useState<String[]>([]);
     const countriesList = useRef<String[]>([]);
@@ -36,7 +38,14 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         const countries = dataToReturn.features.map((country) => {
             return country.properties.name;
         });
+
+        shuffleArray(countries);
         countriesList.current = countries;
+        setIteration(0);
+    }
+
+    function shuffleArray(arr: string[]) {
+        arr.sort(() => Math.random() - 0.5);
     }
 
     useEffect(() => {
@@ -140,6 +149,14 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
             setClickedCountries((prevValue: any) => {
                 return [...prevValue, countryObj];
             });
+
+            setIteration((prevValue) => {
+                if (prevValue) {
+                    return prevValue + 1;
+                } else {
+                    return 1;
+                }
+            });
         });
         populateCountries();
     }, []);
@@ -150,6 +167,7 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         const correctCountry = countriesList.current[index - 1];
 
         if (!pickedCountry) return;
+
         if (pickedCountry.countryName === correctCountry) {
             setAnswer("correct");
             setCorrectCountries((prevValue: any) => {
@@ -166,7 +184,9 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     useEffect(() => {
         const index = clickedCountries.length;
         const pickedCountry: any = clickedCountries[index - 1];
+
         if (!pickedCountry) return;
+
         if (answer === "") return;
 
         if (answer === "correct") {
@@ -176,9 +196,12 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
                     answer: answer,
                 }
             );
+            setAnswer("");
+            return;
         }
         if (correctCountries.includes(pickedCountry.countryName)) {
             console.log("finns redan");
+            setAnswer("");
             return;
         }
         if (answer === "incorrect") {
@@ -199,6 +222,7 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         }
 
         hoveredCountryId = null;
+        setAnswer("");
     }, [answer]);
 
     if (
@@ -209,9 +233,13 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         setGameIsOver(true);
     }
 
-    console.log(clickedCountries);
-
-    return <div ref={mapContainer} className={styles.container}></div>;
+    return (
+        <div ref={mapContainer} className={styles.container}>
+            {typeof iteration === "number" && (
+                <Objective objective={countriesList.current[iteration]} />
+            )}
+        </div>
+    );
 };
 
 export default GamePage;
