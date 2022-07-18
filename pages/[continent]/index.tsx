@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import type { NextPage, GetStaticProps } from "next";
 import type { RootState } from "../../redux/store";
 import Objective from "../../components/Objective";
+import Countdown from "../../components/Countdown";
 
 const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
     const router = useRouter();
@@ -27,6 +28,10 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         return state.gameOptions.zoom;
     });
 
+    const [playerHasClickedReady, setPlayerHasClickedReady] =
+        useState<boolean>(false);
+    const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
+    const [gameStarted, setGameStarted] = useState<boolean>(false);
     const [gameIsOver, setGameIsOver] = useState<boolean>(false);
     let hoveredCountryId: any = null;
 
@@ -53,6 +58,8 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
             router.push("/");
         }
         if (map.current) return;
+
+        setCountdownStarted(true);
 
         map.current = new mapboxgl.Map({
             accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
@@ -235,8 +242,14 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
 
     return (
         <div ref={mapContainer} className={styles.container}>
-            {typeof iteration === "number" && (
+            {typeof iteration === "number" && gameStarted && (
                 <Objective objective={countriesList.current[iteration]} />
+            )}
+            {countdownStarted && (
+                <Countdown
+                    setCountdownStarted={setCountdownStarted}
+                    setGameStarted={setGameStarted}
+                />
             )}
         </div>
     );
