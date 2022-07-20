@@ -11,8 +11,14 @@ import type { NextPage, GetStaticProps } from "next";
 import type { RootState } from "../../redux/store";
 import Objective from "../../components/Objective";
 import Countdown from "../../components/Countdown";
+import GameInfo from "../../components/GameInfo";
 
-const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
+interface Props {
+    dataToReturn: QuizData;
+}
+
+// const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
+function GamePage({ dataToReturn }: Props) {
     const router = useRouter();
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
@@ -236,6 +242,7 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
         countriesList.current.length > 0 &&
         countriesList.current.length === clickedCountries.length
     ) {
+        if (gameIsOver) return;
         console.log("spelet är slut");
         setGameIsOver(true);
     }
@@ -251,9 +258,15 @@ const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
                     setGameStarted={setGameStarted}
                 />
             )}
+            {gameStarted && (
+                <GameInfo
+                    correctCountries={correctCountries}
+                    countriesList={countriesList.current}
+                />
+            )}
         </div>
     );
-};
+}
 
 export default GamePage;
 
