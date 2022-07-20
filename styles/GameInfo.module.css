@@ -36,8 +36,18 @@
     width: 204px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .container .slash {
     margin: 0 0.5rem;
+}
+
+.container .number {
+    width: 3rem;
+    text-align: center;
+}
+
+.container .colon {
+    margin-bottom: 1rem;
 }

@@ -7,7 +7,7 @@ import styles from "./index.module.css";
 import { QuizData } from "../../types";
 import { useSelector } from "react-redux";
 
-import type { NextPage, GetStaticProps } from "next";
+import type { GetStaticProps } from "next";
 import type { RootState } from "../../redux/store";
 import Objective from "../../components/Objective";
 import Countdown from "../../components/Countdown";
@@ -39,6 +39,7 @@ function GamePage({ dataToReturn }: Props) {
     const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
     const [gameStarted, setGameStarted] = useState<boolean>(false);
     const [gameIsOver, setGameIsOver] = useState<boolean>(false);
+    const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
     let hoveredCountryId: any = null;
 
     const playerIsReady = useSelector((state: RootState) => {
@@ -262,6 +263,7 @@ function GamePage({ dataToReturn }: Props) {
                 <GameInfo
                     correctCountries={correctCountries}
                     countriesList={countriesList.current}
+                    gameIsOver={gameIsOver}
                 />
             )}
         </div>
@@ -269,6 +271,12 @@ function GamePage({ dataToReturn }: Props) {
 }
 
 export default GamePage;
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 export const getStaticProps: GetStaticProps = async (context) => {
     if (!context.params) {
