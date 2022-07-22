@@ -5,16 +5,17 @@ import SmallMenu from "./SmallMenu";
 function MenuButtons() {
     const [activeBtn, setActiveBtn] = useState<string>("");
 
-    function handleActiveBtn(e: MouseEvent<HTMLButtonElement>) {
-        setActiveBtn(e.currentTarget.innerText);
+    const handleActiveBtn = (label: string) => () => {
         if (activeBtn === "Play") {
             setActiveBtn("");
+        } else {
+            setActiveBtn(label);
         }
-    }
+    };
     return (
         <section className={style.mainMenuBtns}>
             <button
-                onClick={handleActiveBtn}
+                onClick={handleActiveBtn("Play")}
                 className={
                     activeBtn === "Play"
                         ? `${style.active} ${style.menuBtn}`
@@ -24,10 +25,13 @@ function MenuButtons() {
                 Play
             </button>
             {activeBtn === "Play" && <SmallMenu />}
-            <button className={style.menuBtn} onClick={handleActiveBtn}>
+            <button
+                className={style.menuBtn}
+                onClick={handleActiveBtn("Leaderboards")}
+            >
                 Leaderboards
             </button>
-            <button className={style.menuBtn} onClick={handleActiveBtn}>
+            <button className={style.menuBtn} onClick={handleActiveBtn("Info")}>
                 Info
             </button>
         </section>

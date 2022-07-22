@@ -1,6 +1,16 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import MenuButtons from "../components/MenuButtons";
 import "@testing-library/jest-dom";
+import { Provider } from "react-redux";
+import { store } from "../redux/store";
+
+function MockMenuButtons() {
+    return (
+        <Provider store={store}>
+            <MenuButtons />
+        </Provider>
+    );
+}
 
 describe("MenuButtons", () => {
     it("renders 3 buttons", () => {
@@ -11,14 +21,27 @@ describe("MenuButtons", () => {
         expect(menuBtns.length).toBe(3);
     });
 
-    // test("When Play is clicked, the submenu should appear", async () => {
-    //     render(<MenuButtons />);
+    test("At initial rendering, the submenu should be hidden", () => {
+        render(<MockMenuButtons />);
 
-    //     const playButton = screen.getByRole("button", { name: /play/i });
-    //     fireEvent.click(playButton);
+        const readyButton = screen.queryByText(/Ready/i);
 
-    //     await waitFor(() =>
-    //         expect(screen.getByText(/Ready/i)).toBeInTheDocument()
-    //     );
-    // });
+        expect(readyButton).not.toBeInTheDocument();
+    });
+
+    test("When Play is clicked, the submenu should appear", async () => {
+        render(<MockMenuButtons />);
+
+        const playButton = screen.getByRole("button", { name: "Play" });
+        fireEvent.click(playButton);
+
+        expect(await screen.findByText(/Ready/i)).toBeInTheDocument();
+
+        // await act(() => new Promise((resolve) => setTimeout(resolve, 2000)));
+        // screen.debug();
+
+        // await waitFor(() =>
+        //     expect(screen.getByText(/Ready/i)).toBeInTheDocument()
+        //     );
+    });
 });
