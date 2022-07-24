@@ -126,7 +126,7 @@ function GamePage({ dataToReturn }: Props) {
 
         map.current?.on("mousemove", "country-fills", (e: any) => {
             if (e.features.length > 0) {
-                if (hoveredCountryId) {
+                if (hoveredCountryId >= 0) {
                     map.current?.setFeatureState(
                         { source: "countries", id: hoveredCountryId },
                         { hover: false }
@@ -142,12 +142,14 @@ function GamePage({ dataToReturn }: Props) {
         map.current?.on("mouseleave", "country-fills", () => {
             if (!map.current) return;
             map.current.getCanvas().style.cursor = "";
+
             if (hoveredCountryId !== null) {
                 map.current.setFeatureState(
                     { source: "countries", id: hoveredCountryId },
                     { hover: false }
                 );
             }
+
             hoveredCountryId = null;
         });
         map.current.on("click", "country-fills", (e: any) => {
