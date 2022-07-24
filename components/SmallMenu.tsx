@@ -28,18 +28,11 @@ function SmallMenu() {
         });
     }
 
-    function handleChosenCountry(
-        e: MouseEvent<HTMLButtonElement>,
-        coords: Coords,
-        zoom: number
-    ) {
-        const btnElement = e.target as HTMLButtonElement;
-        setChosenCountry(btnElement.innerText);
+    function handleChosenCountry(name: string, coords: Coords, zoom: number) {
+        setChosenCountry(name);
         setInputClick(false);
 
-        const stateToStore = btnElement.innerText
-            .toLocaleLowerCase()
-            .replace(" ", "");
+        const stateToStore = name.toLocaleLowerCase().replace(" ", "");
 
         dispatch(continentPick(stateToStore));
         dispatch(handleCoords(coords));
@@ -54,7 +47,11 @@ function SmallMenu() {
 
     return (
         <div className={style.container}>
-            <div className={style.customInput} onClick={handleInputClick}>
+            <div
+                className={style.customInput}
+                onClick={handleInputClick}
+                data-testid="inputDiv"
+            >
                 <p>{chosenCountry}</p>
                 <AiFillCaretUp
                     className={
@@ -71,9 +68,9 @@ function SmallMenu() {
                             <button
                                 key={continent.name}
                                 className={style.countryChoice}
-                                onClick={(e) =>
+                                onClick={() =>
                                     handleChosenCountry(
-                                        e,
+                                        continent.name,
                                         continent.coords,
                                         continent.zoom
                                     )
