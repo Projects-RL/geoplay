@@ -13,6 +13,7 @@ import { AiFillCaretUp } from "react-icons/ai";
 import { Coords } from "../interfaces";
 import { continents } from "../continents";
 import LoadingDots from "./LoadingDots";
+import SmallMenuDropdown from "./SmallMenuDropdown";
 
 function SmallMenu() {
     const dispatch = useDispatch();
@@ -32,9 +33,10 @@ function SmallMenu() {
         setChosenCountry(name);
         setInputClick(false);
 
-        const stateToStore = name.toLocaleLowerCase().replace(" ", "");
+        // const stateToStore = name.toLocaleLowerCase().replace(" ", "");
 
-        dispatch(continentPick(stateToStore));
+        // dispatch(continentPick(stateToStore));
+        dispatch(continentPick(name));
         dispatch(handleCoords(coords));
         dispatch(handleZoom(zoom));
     }
@@ -62,25 +64,10 @@ function SmallMenu() {
                 />
             </div>
             {inputClick && (
-                <div className={style.dropdown}>
-                    {continents.map((continent) => {
-                        return (
-                            <button
-                                key={continent.name}
-                                className={style.countryChoice}
-                                onClick={() =>
-                                    handleChosenCountry(
-                                        continent.name,
-                                        continent.coords,
-                                        continent.zoom
-                                    )
-                                }
-                            >
-                                {continent.name}
-                            </button>
-                        );
-                    })}
-                </div>
+                <SmallMenuDropdown
+                    continents={continents}
+                    handleChosenCountry={handleChosenCountry}
+                />
             )}
             {inputClick && (
                 <div

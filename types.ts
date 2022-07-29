@@ -131,3 +131,14 @@ export enum PropertiesType {
 export enum FeatureType {
     Feature = "Feature",
 }
+
+export interface ContinentState {
+    coords: Coords;
+    name: string;
+    zoom: number;
+}
+
+export interface Coords {
+    lat: number;
+    lng: number;
+}

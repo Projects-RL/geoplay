@@ -12,9 +12,11 @@ import type { RootState } from "../../redux/store";
 import Objective from "../../components/Objective";
 import Countdown from "../../components/Countdown";
 import GameInfo from "../../components/GameInfo";
+import ReadyUp from "../../components/ReadyUp";
 
 interface Props {
     dataToReturn: QuizData;
+    continent: string;
 }
 
 // const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
@@ -65,8 +67,6 @@ function GamePage({ dataToReturn }: Props) {
             router.push("/");
         }
         if (map.current) return;
-
-        setCountdownStarted(true);
 
         map.current = new mapboxgl.Map({
             accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
@@ -254,6 +254,12 @@ function GamePage({ dataToReturn }: Props) {
         <div ref={mapContainer} className={styles.container}>
             {typeof iteration === "number" && gameStarted && (
                 <Objective objective={countriesList.current[iteration]} />
+            )}
+            {!playerHasClickedReady && (
+                <ReadyUp
+                    setPlayerHasClickedReady={setPlayerHasClickedReady}
+                    setCountdownStarted={setCountdownStarted}
+                />
             )}
             {countdownStarted && (
                 <Countdown
