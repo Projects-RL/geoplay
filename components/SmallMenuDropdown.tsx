@@ -9,8 +9,6 @@ interface Props {
 }
 
 function SmallMenuDropdown({ continents, handleChosenCountry }: Props) {
-    console.log(continents);
-
     return (
         <div className={style.dropdown}>
             {continents.map((continent) => {
