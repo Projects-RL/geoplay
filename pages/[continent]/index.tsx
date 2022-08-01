@@ -287,6 +287,7 @@ function GamePage({ dataToReturn }: Props) {
                     setGameStarted={setGameStarted}
                 />
             )}
+            {!gameStarted && <div className={styles.overlay}></div>}
             {gameStarted && (
                 <GameInfo
                     correctCountries={correctCountries}
