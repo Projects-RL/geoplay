@@ -174,6 +174,7 @@ function GamePage({ dataToReturn }: Props) {
                 }
             });
         });
+
         populateCountries();
     }, []);
 
@@ -227,6 +228,7 @@ function GamePage({ dataToReturn }: Props) {
                     answer: answer,
                 }
             );
+            colorCorrectCountry(index);
         }
         if (answer === "changeBack") {
             map.current?.setFeatureState(
@@ -240,6 +242,24 @@ function GamePage({ dataToReturn }: Props) {
         hoveredCountryId = null;
         setAnswer("");
     }, [answer]);
+
+    function colorCorrectCountry(index: number) {
+        const correctCountry = countriesList.current[index - 1];
+        const features = map.current?.queryRenderedFeatures(undefined, {
+            layers: ["country-fills"],
+        });
+
+        features?.forEach((feature: any) => {
+            if (feature.properties.name === correctCountry) {
+                map.current?.setFeatureState(
+                    { source: "countries", id: feature.id },
+                    {
+                        answer: "incorrect",
+                    }
+                );
+            }
+        });
+    }
 
     if (
         countriesList.current.length > 0 &&

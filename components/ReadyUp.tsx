@@ -13,8 +13,6 @@ function ReadyUp({ setPlayerHasClickedReady, setCountdownStarted }: Props) {
         return state.gameOptions.continent;
     });
 
-    console.log(continent);
-
     function handleStart() {
         setPlayerHasClickedReady(true);
         setCountdownStarted(true);
