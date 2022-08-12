@@ -267,6 +267,7 @@ function GamePage({ dataToReturn }: Props) {
     ) {
         if (gameIsOver) return;
         console.log("spelet är slut");
+        console.log("rätta svar", correctCountries.length);
         setGameIsOver(true);
     }
 
