@@ -19,14 +19,23 @@ interface Props {
     continent: string;
 }
 
+interface ICountry {
+    countryId: number;
+    countryName: string;
+}
+
 // const GamePage: NextPage<{ dataToReturn: QuizData }> = ({ dataToReturn }) => {
 function GamePage({ dataToReturn }: Props) {
     const router = useRouter();
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<mapboxgl.Map | null>(null);
     const [iteration, setIteration] = useState<number>();
-    const [clickedCountries, setClickedCountries] = useState<String[]>([]);
-    const [correctCountries, setCorrectCountries] = useState<String[]>([]);
+    const [clickedCountries, setClickedCountries] = useState<ICountry[]>([]);
+    const [correctClickedCountries, setCorrectClickedCountries] = useState<
+        String[]
+    >([]);
+    const [correctCountriesClickedWrong, setCorrectCountriesClickedWrong] =
+        useState<String[]>([]);
     const countriesList = useRef<String[]>([]);
     const [answer, setAnswer] = useState<string>("");
     const coords = useSelector((state: RootState) => {
@@ -187,11 +196,21 @@ function GamePage({ dataToReturn }: Props) {
 
         if (pickedCountry.countryName === correctCountry) {
             setAnswer("correct");
-            setCorrectCountries((prevValue: any) => {
+            setCorrectClickedCountries((prevValue: any) => {
                 return [...prevValue, correctCountry];
             });
         } else {
             setAnswer("incorrect");
+            setCorrectCountriesClickedWrong((prevValue: any) => {
+                return [...prevValue, correctCountry];
+            });
+
+            const containCountry = correctCountriesClickedWrong.includes(
+                pickedCountry.countryName
+            );
+
+            if (containCountry) return;
+
             setTimeout(() => {
                 setAnswer("changeBack");
             }, 200);
@@ -216,7 +235,7 @@ function GamePage({ dataToReturn }: Props) {
             setAnswer("");
             return;
         }
-        if (correctCountries.includes(pickedCountry.countryName)) {
+        if (correctClickedCountries.includes(pickedCountry.countryName)) {
             console.log("finns redan");
             setAnswer("");
             return;
@@ -267,7 +286,7 @@ function GamePage({ dataToReturn }: Props) {
     ) {
         if (gameIsOver) return;
         console.log("spelet är slut");
-        console.log("rätta svar", correctCountries.length);
+        console.log("rätta svar", correctClickedCountries.length);
         setGameIsOver(true);
     }
 
@@ -291,7 +310,7 @@ function GamePage({ dataToReturn }: Props) {
             {!gameStarted && <div className={styles.overlay}></div>}
             {gameStarted && (
                 <GameInfo
-                    correctCountries={correctCountries}
+                    correctClickedCountries={correctClickedCountries}
                     countriesList={countriesList.current}
                     gameIsOver={gameIsOver}
                 />

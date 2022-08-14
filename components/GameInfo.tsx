@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import style from "../styles/GameInfo.module.css";
 
 interface Props {
-    correctCountries: String[];
+    correctClickedCountries: String[];
     countriesList: String[];
     gameIsOver: boolean;
 }
 
-function GameInfo({ correctCountries, countriesList, gameIsOver }: Props) {
+function GameInfo({
+    correctClickedCountries,
+    countriesList,
+    gameIsOver,
+}: Props) {
     const [time, setTime] = useState<number>(0);
     const [timerOn, setTimerOn] = useState<boolean>(false);
 
@@ -39,7 +43,7 @@ function GameInfo({ correctCountries, countriesList, gameIsOver }: Props) {
     return (
         <section className={style.container}>
             <div className={style.correctAnswers}>
-                <span>{correctCountries.length}</span>
+                <span>{correctClickedCountries.length}</span>
                 <span className={style.slash}>/</span>
                 <span>{countriesList.length}</span>
             </div>
