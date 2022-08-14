@@ -238,6 +238,7 @@ function GamePage({ dataToReturn }: Props) {
         if (correctClickedCountries.includes(pickedCountry.countryName)) {
             console.log("finns redan");
             setAnswer("");
+            colorCorrectCountry(index);
             return;
         }
         if (answer === "incorrect") {
