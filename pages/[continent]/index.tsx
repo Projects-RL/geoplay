@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { MongoClient } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
@@ -20,7 +20,8 @@ interface Props {
 }
 
 interface ICountry {
-    countryId: number;
+    countryId?: number;
+    countryID?: number;
     countryName: string;
 }
 
@@ -58,7 +59,7 @@ function GamePage({ dataToReturn }: Props) {
     });
 
     function populateCountries() {
-        const countries = dataToReturn.features.map((country) => {
+        const countries: string[] = dataToReturn.features.map((country) => {
             return country.properties.name;
         });
 
@@ -164,10 +165,10 @@ function GamePage({ dataToReturn }: Props) {
         map.current.on("click", "country-fills", (e: any) => {
             if (!countriesList) return;
 
-            const countryID = e.features[0].id;
-            const countryName = e.features[0].properties.name;
+            const countryID: number = e.features[0].id;
+            const countryName: string = e.features[0].properties.name;
 
-            const countryObj = {
+            const countryObj: { countryID: number; countryName: string } = {
                 countryID,
                 countryName,
             };
@@ -188,9 +189,9 @@ function GamePage({ dataToReturn }: Props) {
     }, []);
 
     useEffect(() => {
-        const index = clickedCountries.length;
-        const pickedCountry: any = clickedCountries[index - 1];
-        const correctCountry = countriesList.current[index - 1];
+        const index: number = clickedCountries.length;
+        const pickedCountry: ICountry = clickedCountries[index - 1];
+        const correctCountry: String = countriesList.current[index - 1];
 
         if (!pickedCountry) return;
 
@@ -205,9 +206,10 @@ function GamePage({ dataToReturn }: Props) {
                 return [...prevValue, correctCountry];
             });
 
-            const containCountry = correctCountriesClickedWrong.includes(
-                pickedCountry.countryName
-            );
+            const containCountry: boolean =
+                correctCountriesClickedWrong.includes(
+                    pickedCountry.countryName
+                );
 
             if (containCountry) return;
 
@@ -215,11 +217,13 @@ function GamePage({ dataToReturn }: Props) {
                 setAnswer("changeBack");
             }, 200);
         }
+
+        isGameOver();
     }, [clickedCountries]);
 
     useEffect(() => {
-        const index = clickedCountries.length;
-        const pickedCountry: any = clickedCountries[index - 1];
+        const index: number = clickedCountries.length;
+        const pickedCountry: ICountry = clickedCountries[index - 1];
 
         if (!pickedCountry) return;
 
@@ -264,10 +268,11 @@ function GamePage({ dataToReturn }: Props) {
     }, [answer]);
 
     function colorCorrectCountry(index: number) {
-        const correctCountry = countriesList.current[index - 1];
-        const features = map.current?.queryRenderedFeatures(undefined, {
-            layers: ["country-fills"],
-        });
+        const correctCountry: String = countriesList.current[index - 1];
+        const features: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+            map.current?.queryRenderedFeatures(undefined, {
+                layers: ["country-fills"],
+            });
 
         features?.forEach((feature: any) => {
             if (feature.properties.name === correctCountry) {
@@ -281,19 +286,22 @@ function GamePage({ dataToReturn }: Props) {
         });
     }
 
-    if (
-        countriesList.current.length > 0 &&
-        countriesList.current.length === clickedCountries.length
-    ) {
-        if (gameIsOver) return;
-        console.log("spelet är slut");
-        console.log("rätta svar", correctClickedCountries.length);
-        setGameIsOver(true);
+    function isGameOver() {
+        if (
+            countriesList.current.length > 0 &&
+            countriesList.current.length === clickedCountries.length
+        ) {
+            if (gameIsOver) return;
+
+            console.log("spelet är slut");
+            console.log("rätta svar", correctClickedCountries.length);
+            setGameIsOver(true);
+        }
     }
 
     return (
         <div ref={mapContainer} className={styles.container}>
-            {typeof iteration === "number" && gameStarted && (
+            {typeof iteration === "number" && gameStarted && !gameIsOver && (
                 <Objective objective={countriesList.current[iteration]} />
             )}
             {!playerHasClickedReady && (
@@ -337,11 +345,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
     if (typeof params !== "string") {
         return { props: {} };
     }
-    const continentString = params?.replace(" ", "");
+    const continentString: string = params?.replace(" ", "");
 
-    const user = process.env.DB_USER;
-    const password = process.env.DB_PASSWORD;
-    const databaseName = process.env.DB_NAME;
+    const user: string | undefined = process.env.DB_USER;
+    const password: string | undefined = process.env.DB_PASSWORD;
+    const databaseName: string | undefined = process.env.DB_NAME;
 
     const client = await MongoClient.connect(
         "mongodb+srv://" +
@@ -353,7 +361,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
             "?retryWrites=true&w=majority"
     );
 
-    const db = client.db();
+    const db: Db = client.db();
     const geojsonData = db.collection("geojsonData");
 
     const data = await geojsonData.find().toArray();
@@ -366,7 +374,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
 
     async function fetchJsonData() {
-        const response = await fetch(dataToFetch);
+        const response: Response = await fetch(dataToFetch);
         const data = await response.json();
 
         return data;
@@ -382,11 +390,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 };
 
 export async function getStaticPaths() {
-    const user = process.env.DB_USER;
-    const password = process.env.DB_PASSWORD;
-    const databaseName = process.env.DB_NAME;
+    const user: string | undefined = process.env.DB_USER;
+    const password: string | undefined = process.env.DB_PASSWORD;
+    const databaseName: string | undefined = process.env.DB_NAME;
 
-    const client = await MongoClient.connect(
+    const client: MongoClient = await MongoClient.connect(
         "mongodb+srv://" +
             user +
             ":" +
@@ -396,7 +404,7 @@ export async function getStaticPaths() {
             "?retryWrites=true&w=majority"
     );
 
-    const db = client.db();
+    const db: Db = client.db();
     const geojsonData = db.collection("geojsonData");
 
     const data = await geojsonData.find().toArray();

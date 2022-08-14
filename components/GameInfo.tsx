@@ -36,7 +36,7 @@ function GameInfo({
         return () => clearInterval(interval);
     }, [timerOn]);
 
-    if (gameIsOver) {
+    if (gameIsOver && timerOn) {
         setTimerOn(false);
     }
 
