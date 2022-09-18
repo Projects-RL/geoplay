@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import style from "../styles/Home.module.css";
@@ -9,6 +9,7 @@ import Overlay from "../components/Overlay";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
+import { supabase } from "../config/supabase";
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
