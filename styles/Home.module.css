@@ -51,15 +51,6 @@
   border: none;
 }
 
-.overlay {
-  position: absolute;
-  background-color: rgba(0, 0, 0, 0.203);
-  width: 100%;
-  height: 100%;
-  z-index: 9;
-  backdrop-filter: blur(2px);
-}
-
 @keyframes bop {
   0% {
     transform: scale(0.9);

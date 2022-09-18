@@ -5,12 +5,19 @@ import style from "../styles/Home.module.css";
 import MenuButtons from "../components/MenuButtons";
 import { CgProfile } from "react-icons/cg";
 import UserAuth from "../components/UserAuth";
+import Overlay from "../components/Overlay";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
 
 const Home: NextPage = () => {
-  const [showUserAuth, setShowUserAuth] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const showSignIn: boolean = useSelector((state: RootState) => {
+    return state.componentHandling.showSignIn;
+  });
 
   function handleProfileButtonClick(bool: boolean) {
-    setShowUserAuth(bool);
+    dispatch(handleShowSignIn(bool));
   }
 
   return (
@@ -25,13 +32,8 @@ const Home: NextPage = () => {
       >
         <CgProfile />
       </button>
-      {showUserAuth && <UserAuth />}
-      {showUserAuth && (
-        <div
-          className={style.overlay}
-          onClick={() => handleProfileButtonClick(false)}
-        ></div>
-      )}
+      {showSignIn && <UserAuth />}
+      {showSignIn && <Overlay />}
       <section className={style.header}>
         <h1>
           <span role="heading">Geo</span>
