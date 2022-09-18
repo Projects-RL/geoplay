@@ -4,33 +4,35 @@ import "@testing-library/jest-dom";
 import Countdown from "../components/Countdown";
 
 describe("Countdown", () => {
-    const setCountdownStarted = jest.fn();
-    const setGameStarted = jest.fn();
+  const setCountdownStarted = jest.fn();
+  const setGameStarted = jest.fn();
 
-    it("renders a '3' in the beginning", () => {
-        render(
-            <Countdown
-                setCountdownStarted={setCountdownStarted}
-                setGameStarted={setGameStarted}
-            />
-        );
+  it("renders a '3' in the beginning", () => {
+    render(
+      <Countdown
+        setCountdownStarted={setCountdownStarted}
+        setGameStarted={setGameStarted}
+      />
+    );
 
-        const divElement = screen.getByText("3");
+    const divElement = screen.getByText("3");
 
-        expect(divElement).toBeInTheDocument();
+    expect(divElement).toBeInTheDocument();
+  });
+
+  test('after 1 second the "3" should become a "2"', async () => {
+    render(
+      <Countdown
+        setCountdownStarted={setCountdownStarted}
+        setGameStarted={setGameStarted}
+      />
+    );
+
+    await waitFor(() => {
+      const divElement = screen.getByText("2");
+
+      expect(divElement).toBeInTheDocument();
+      screen.debug();
     });
-
-    test('after 1 second the "3" should become a "2"', () => {
-        render(
-            <Countdown
-                setCountdownStarted={setCountdownStarted}
-                setGameStarted={setGameStarted}
-            />
-        );
-
-        waitFor(() => {
-            const divElement = screen.getByText("2");
-            expect(divElement).toBeInTheDocument();
-        });
-    });
+  });
 });
