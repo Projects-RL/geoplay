@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import style from "../styles/UserAuth.module.css";
-import { signIn, signUp } from "../utils/auth";
+import { signIn, signUp, updateUsername } from "../utils/auth";
 
 function UserAuth() {
   const [email, setEmail] = useState("");
@@ -24,13 +24,20 @@ function UserAuth() {
     username: string
   ) {
     if (tab === "signIn") {
-      const response = await signIn(email, password);
+      const signInResponse = await signIn(email, password);
 
-      console.log(response);
+      console.log(signInResponse);
     } else if (tab === "signUp") {
-      const response = await signUp(email, password, username);
+      const signUpResponse = await signUp(email, password);
 
-      console.log(response);
+      console.log("1", signUpResponse);
+      if (signUpResponse.user) {
+        const updateUsernameResponse = await updateUsername(
+          username,
+          signUpResponse.user.id
+        );
+        console.log("2", updateUsernameResponse);
+      }
     }
   }
 
