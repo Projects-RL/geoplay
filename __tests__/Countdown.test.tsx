@@ -28,11 +28,12 @@ describe("Countdown", () => {
       />
     );
 
+    await new Promise((r) => setTimeout(r, 1000));
+
     await waitFor(() => {
       const divElement = screen.getByText("2");
 
       expect(divElement).toBeInTheDocument();
-      screen.debug();
     });
   });
 });

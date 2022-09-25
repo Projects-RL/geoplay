@@ -1,12 +1,16 @@
 import React, { ChangeEvent, useState } from "react";
+import { useDispatch } from "react-redux";
+import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
 import style from "../styles/UserAuth.module.css";
 import { signIn, signUp, updateUsername } from "../utils/auth";
 
 function UserAuth() {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [tab, setTab] = useState("signIn");
+  const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
 
   function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.name === "email") {
@@ -26,17 +30,31 @@ function UserAuth() {
     if (tab === "signIn") {
       const signInResponse = await signIn(email, password);
 
-      console.log(signInResponse);
+      if (signInResponse.success) {
+        dispatch(handleShowSignIn(false));
+      } else {
+        setErrorMsg(signInResponse.error?.message);
+      }
     } else if (tab === "signUp") {
+      if (!username) {
+        setErrorMsg("Choose a username");
+        return;
+      }
       const signUpResponse = await signUp(email, password);
 
-      console.log("1", signUpResponse);
       if (signUpResponse.user) {
         const updateUsernameResponse = await updateUsername(
           username,
           signUpResponse.user.id
         );
-        console.log("2", updateUsernameResponse);
+
+        if (updateUsernameResponse.data) {
+          dispatch(handleShowSignIn(false));
+        } else {
+          setErrorMsg(updateUsernameResponse.error?.message);
+        }
+      } else {
+        setErrorMsg(signUpResponse.error?.message);
       }
     }
   }
@@ -98,6 +116,7 @@ function UserAuth() {
         value={tab === "signIn" ? "Sign in" : "Sign up"}
         onClick={() => handleSubmit(email, password, username)}
       />
+      {errorMsg && <p>{errorMsg}</p>}
     </div>
   );
 }

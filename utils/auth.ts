@@ -54,9 +54,6 @@ export async function signUp(email: string, password: string) {
 }
 
 export async function updateUsername(username: string, id: string) {
-  console.log(username);
-  console.log(id);
-
   const response = await supabase
     .from("profile")
     .update({ display_name: username })
