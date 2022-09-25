@@ -12,7 +12,7 @@ export const componentHandlingSlice = createSlice({
   name: "componentHandling",
   initialState,
   reducers: {
-    handleShowSignIn: (state, action) => {
+    handleShowSignIn: (state, action: { payload: boolean }) => {
       state.showSignIn = action.payload;
     },
   },

@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 import {
   continentPick,
-  // gameModePick,
   handleCoords,
   handleReady,
   handleZoom,

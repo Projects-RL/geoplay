@@ -1,10 +1,10 @@
-import { AuthError, User } from "@supabase/supabase-js";
+import { ApiError, User } from "@supabase/supabase-js";
 import { supabase } from "../config/supabase";
 
 interface IStatusObj {
   success: boolean;
   user: User | null;
-  error: AuthError | null;
+  error: string | null;
 }
 
 export async function signIn(email: string, password: string) {
@@ -14,17 +14,17 @@ export async function signIn(email: string, password: string) {
     error: null,
   };
 
-  const {
-    data: { user, session },
-    error,
-  } = await supabase.auth.signInWithPassword({ email, password });
+  const { user, error } = await supabase.auth.signIn({
+    email,
+    password,
+  });
 
   if (user) {
     statusObj.user = user;
     statusObj.success = true;
   }
   if (error) {
-    statusObj.error = error;
+    statusObj.error = error.message;
   }
 
   return statusObj;
@@ -37,17 +37,14 @@ export async function signUp(email: string, password: string) {
     error: null,
   };
 
-  const {
-    data: { user, session },
-    error,
-  } = await supabase.auth.signUp({ email, password });
+  const { user, error } = await supabase.auth.signUp({ email, password });
 
   if (user) {
     statusObj.user = user;
     statusObj.success = true;
   }
   if (error) {
-    statusObj.error = error;
+    statusObj.error = error.message;
   }
 
   return statusObj;
@@ -62,3 +59,12 @@ export async function updateUsername(username: string, id: string) {
 
   return response;
 }
+
+// export async function checkIfUserIsLoggedIn() {
+//   const { data, error } = await supabase.auth.getUser();
+
+//   if (data.user) {
+//     return true;
+//   }
+//   return false;
+// }

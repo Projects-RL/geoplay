@@ -4,7 +4,7 @@ import { Db, MongoClient } from "mongodb";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
-import { QuizData } from "../../types";
+import { mouseMoveEvent, QuizData } from "../../types";
 import { useSelector } from "react-redux";
 
 import type { GetStaticProps } from "next";
@@ -50,8 +50,8 @@ function GamePage({ dataToReturn }: Props) {
   const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
-  const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  let hoveredCountryId: any = null;
+  // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  let hoveredCountryId: string | number | undefined;
 
   const playerIsReady = useSelector((state: RootState) => {
     return state.gameOptions.ready;
@@ -133,15 +133,18 @@ function GamePage({ dataToReturn }: Props) {
       map.current.getCanvas().style.cursor = "pointer";
     });
 
-    map.current?.on("mousemove", "country-fills", (e: any) => {
-      if (e.features.length > 0) {
-        if (hoveredCountryId >= 0) {
+    map.current?.on("mousemove", "country-fills", (e: mouseMoveEvent) => {
+      const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+        e.features;
+
+      if (mapFeatures && mapFeatures.length > 0) {
+        if (hoveredCountryId && hoveredCountryId >= 0) {
           map.current?.setFeatureState(
             { source: "countries", id: hoveredCountryId },
             { hover: false }
           );
         }
-        hoveredCountryId = e.features[0].id;
+        hoveredCountryId = mapFeatures[0].id;
         map.current?.setFeatureState(
           { source: "countries", id: hoveredCountryId },
           { hover: true }
@@ -159,15 +162,21 @@ function GamePage({ dataToReturn }: Props) {
         );
       }
 
-      hoveredCountryId = null;
+      hoveredCountryId = undefined;
     });
-    map.current.on("click", "country-fills", (e: any) => {
+    map.current.on("click", "country-fills", (e: mouseMoveEvent) => {
       if (!countriesList) return;
 
-      const countryID: number = e.features[0].id;
-      const countryName: string = e.features[0].properties.name;
+      const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+        e.features;
 
-      const countryObj: { countryID: number; countryName: string } = {
+      const countryID = mapFeatures?.[0].id;
+      const countryName = mapFeatures?.[0].properties?.name;
+
+      const countryObj: {
+        countryID: string | number | undefined;
+        countryName: string;
+      } = {
         countryID,
         countryName,
       };
@@ -261,7 +270,7 @@ function GamePage({ dataToReturn }: Props) {
       );
     }
 
-    hoveredCountryId = null;
+    hoveredCountryId = undefined;
     setAnswer("");
   }, [answer]);
 

@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
+import { handleIsLoggedIn } from "../redux/features/userSlice";
 import style from "../styles/UserAuth.module.css";
 import { signIn, signUp, updateUsername } from "../utils/auth";
 
@@ -10,7 +11,7 @@ function UserAuth() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [tab, setTab] = useState("signIn");
-  const [errorMsg, setErrorMsg] = useState<string | undefined>(undefined);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
     if (e.target.name === "email") {
@@ -30,10 +31,13 @@ function UserAuth() {
     if (tab === "signIn") {
       const signInResponse = await signIn(email, password);
 
+      console.log(signInResponse);
+
       if (signInResponse.success) {
         dispatch(handleShowSignIn(false));
+        dispatch(handleIsLoggedIn(true));
       } else {
-        setErrorMsg(signInResponse.error?.message);
+        setErrorMsg(signInResponse.error);
       }
     } else if (tab === "signUp") {
       if (!username) {
@@ -50,11 +54,12 @@ function UserAuth() {
 
         if (updateUsernameResponse.data) {
           dispatch(handleShowSignIn(false));
+          dispatch(handleIsLoggedIn(true));
         } else {
           setErrorMsg(updateUsernameResponse.error?.message);
         }
       } else {
-        setErrorMsg(signUpResponse.error?.message);
+        setErrorMsg(signUpResponse.error);
       }
     }
   }

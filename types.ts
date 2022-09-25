@@ -142,3 +142,7 @@ export interface Coords {
   lat: number;
   lng: number;
 }
+
+export type mouseMoveEvent = mapboxgl.MapMouseEvent & {
+  features?: mapboxgl.MapboxGeoJSONFeature[] | undefined;
+};
