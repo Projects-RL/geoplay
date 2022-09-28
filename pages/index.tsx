@@ -47,6 +47,7 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
         <button
           className={style.profileButton}
           onClick={() => handleProfileButtonClick()}
+          data-testid="profileButton"
         >
           <CgProfile />
         </button>

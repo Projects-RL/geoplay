@@ -13,11 +13,13 @@ export async function signIn(email: string, password: string) {
     user: null,
     error: null,
   };
+  console.log("hej");
 
   const { user, error } = await supabase.auth.signIn({
     email,
     password,
   });
+  console.log(user);
 
   if (user) {
     statusObj.user = user;
