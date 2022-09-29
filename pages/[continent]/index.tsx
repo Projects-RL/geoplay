@@ -5,14 +5,13 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import styles from "./index.module.css";
 import { mouseMoveEvent, QuizData } from "../../types";
-import { useSelector } from "react-redux";
-
 import type { GetStaticProps } from "next";
 import type { RootState } from "../../redux/store";
 import Objective from "../../components/Objective";
 import Countdown from "../../components/Countdown";
 import GameInfo from "../../components/GameInfo";
 import ReadyUp from "../../components/ReadyUp";
+import { useAppSelector } from "../../hooks/hooks";
 
 interface Props {
   dataToReturn: QuizData;
@@ -38,10 +37,10 @@ function GamePage({ dataToReturn }: Props) {
     useState<string[]>([]);
   const countriesList = useRef<string[]>([]);
   const [answer, setAnswer] = useState<string>("");
-  const coords = useSelector((state: RootState) => {
+  const coords = useAppSelector((state: RootState) => {
     return state.gameOptions.coordinates;
   });
-  const zoomLevel = useSelector((state: RootState) => {
+  const zoomLevel = useAppSelector((state: RootState) => {
     return state.gameOptions.zoom;
   });
 
@@ -53,7 +52,7 @@ function GamePage({ dataToReturn }: Props) {
   // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
   let hoveredCountryId: string | number | undefined;
 
-  const playerIsReady = useSelector((state: RootState) => {
+  const playerIsReady = useAppSelector((state: RootState) => {
     return state.gameOptions.ready;
   });
 

@@ -6,26 +6,26 @@ import MenuButtons from "../components/MenuButtons";
 import { CgProfile } from "react-icons/cg";
 import UserAuth from "../components/UserAuth";
 import Overlay from "../components/Overlay";
-import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
 import { handleIsLoggedIn } from "../redux/features/userSlice";
 import { supabase } from "../config/supabase";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 
 interface Props {
   isLoggedIn: boolean;
 }
 
 const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   if (isLoggedIn) {
     dispatch(handleIsLoggedIn(true));
   }
-  const showSignIn: boolean = useSelector((state: RootState) => {
+  const showSignIn: boolean = useAppSelector((state: RootState) => {
     return state.componentHandling.showSignIn;
   });
-  const userIsLoggedIn = useSelector((state: RootState) => {
+  const userIsLoggedIn = useAppSelector((state: RootState) => {
     return state.userSlice.isLoggedIn;
   });
 
@@ -36,6 +36,7 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
       dispatch(handleShowSignIn(true));
     }
   }
+  console.log(isLoggedIn, userIsLoggedIn);
 
   return (
     <>

@@ -1,12 +1,12 @@
 import React, { ChangeEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../hooks/hooks";
 import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
 import { handleIsLoggedIn } from "../redux/features/userSlice";
 import style from "../styles/UserAuth.module.css";
 import { signIn, signUp, updateUsername } from "../utils/auth";
 
 function UserAuth() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
