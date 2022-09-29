@@ -9,7 +9,13 @@ function Overlay() {
     dispatch(handleShowSignIn(false));
   }
 
-  return <div className={style.overlay} onClick={() => handleOnClick()}></div>;
+  return (
+    <div
+      data-testid="overlay"
+      className={style.overlay}
+      onClick={() => handleOnClick()}
+    ></div>
+  );
 }
 
 export default Overlay;
