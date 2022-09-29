@@ -1,7 +1,5 @@
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { screen, fireEvent, cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-// import { configureStore } from "../redux/store";
 import Home from "../pages";
 import { server } from "../mocks/server";
 import { renderWithProviders } from "../utils/test-utils";

@@ -31,8 +31,6 @@ function UserAuth() {
     if (tab === "signIn") {
       const signInResponse = await signIn(email, password);
 
-      console.log(signInResponse);
-
       if (signInResponse.success) {
         dispatch(handleShowSignIn(false));
         dispatch(handleIsLoggedIn(true));

@@ -1,20 +1,11 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import MenuButtons from "../components/MenuButtons";
 import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
-
-function MockMenuButtons() {
-  return (
-    <Provider store={store}>
-      <MenuButtons />
-    </Provider>
-  );
-}
+import { renderWithProviders } from "../utils/test-utils";
 
 describe("MenuButtons", () => {
   it("renders 3 buttons", () => {
-    render(<MenuButtons />);
+    renderWithProviders(<MenuButtons />);
 
     const menuBtns = screen.getAllByRole("button");
 
@@ -22,15 +13,14 @@ describe("MenuButtons", () => {
   });
 
   test("At initial rendering, the submenu should be hidden", () => {
-    render(<MockMenuButtons />);
-
+    renderWithProviders(<MenuButtons />);
     const readyButton = screen.queryByText(/Ready/i);
 
     expect(readyButton).not.toBeInTheDocument();
   });
 
   test("When Play is clicked, the submenu should appear", async () => {
-    render(<MockMenuButtons />);
+    renderWithProviders(<MenuButtons />);
 
     const playButton = screen.getByRole("button", { name: "Play" });
     fireEvent.click(playButton);

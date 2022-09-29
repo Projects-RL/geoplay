@@ -7,7 +7,7 @@ import gameOptionsReducer from "./features/gameOptionsSlice";
 import componentHandlingReducer from "./features/componentHandlingSlice";
 import userSlice from "./features/userSlice";
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   gameOptions: gameOptionsReducer,
   componentHandling: componentHandlingReducer,
   userSlice: userSlice,

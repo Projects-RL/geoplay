@@ -36,7 +36,6 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
       dispatch(handleShowSignIn(true));
     }
   }
-  console.log(isLoggedIn, userIsLoggedIn);
 
   return (
     <>
