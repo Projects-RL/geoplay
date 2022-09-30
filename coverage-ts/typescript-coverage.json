@@ -1,0 +1,177 @@
+{
+  "fileCounts": {},
+  "anys": [
+    {
+      "file": "mocks/handlers.ts",
+      "line": 14,
+      "character": 8,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 14,
+      "character": 36,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 15,
+      "character": 8,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 15,
+      "character": 39,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 19,
+      "character": 19,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 20,
+      "character": 19,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 30,
+      "character": 19,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 31,
+      "character": 19,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 42,
+      "character": 8,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 42,
+      "character": 36,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 43,
+      "character": 8,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 43,
+      "character": 39,
+      "text": "password",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 44,
+      "character": 8,
+      "text": "username",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 44,
+      "character": 39,
+      "text": "username",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 47,
+      "character": 21,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "mocks/handlers.ts",
+      "line": 50,
+      "character": 21,
+      "text": "email",
+      "kind": 1
+    },
+    {
+      "file": "pages/_app.tsx",
+      "line": 13,
+      "character": 28,
+      "text": "pageProps",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 173,
+      "character": 12,
+      "text": "countryName",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 173,
+      "character": 55,
+      "text": "name",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 291,
+      "character": 31,
+      "text": "name",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 391,
+      "character": 10,
+      "text": "data",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 393,
+      "character": 11,
+      "text": "data",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 395,
+      "character": 8,
+      "text": "dataToReturn",
+      "kind": 1
+    },
+    {
+      "file": "pages/[continent]/index.tsx",
+      "line": 399,
+      "character": 6,
+      "text": "dataToReturn",
+      "kind": 1
+    }
+  ],
+  "percentage": 98.90310786106033,
+  "total": 2188,
+  "covered": 2164,
+  "uncovered": 24
+}

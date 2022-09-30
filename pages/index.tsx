@@ -1,16 +1,16 @@
-import React from "react";
-import type { GetServerSideProps, NextPage } from "next";
-import Head from "next/head";
-import style from "../styles/Home.module.css";
-import MenuButtons from "../components/MenuButtons";
-import { CgProfile } from "react-icons/cg";
-import UserAuth from "../components/UserAuth";
-import Overlay from "../components/Overlay";
-import { RootState } from "../redux/store";
-import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
-import { handleIsLoggedIn } from "../redux/features/userSlice";
-import { supabase } from "../config/supabase";
-import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import React from 'react';
+import type { GetServerSideProps, NextPage } from 'next';
+import Head from 'next/head';
+import style from '../styles/Home.module.css';
+import MenuButtons from '../components/MenuButtons';
+import { CgProfile } from 'react-icons/cg';
+import UserAuth from '../components/UserAuth';
+import Overlay from '../components/Overlay';
+import { RootState } from '../redux/store';
+import { handleShowSignIn } from '../redux/features/componentHandlingSlice';
+import { handleIsLoggedIn } from '../redux/features/userSlice';
+import { supabase } from '../config/supabase';
+import { useAppDispatch, useAppSelector } from '../hooks/hooks';
 
 interface Props {
   isLoggedIn: boolean;
@@ -31,7 +31,7 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
 
   function handleProfileButtonClick() {
     if (isLoggedIn || userIsLoggedIn) {
-      console.log("signed in wee");
+      console.log('signed in wee');
     } else {
       dispatch(handleShowSignIn(true));
     }
@@ -56,8 +56,12 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
         {showSignIn && <Overlay />}
         <section className={style.header}>
           <h1>
-            <span role="heading">Geo</span>
-            <span role="heading">Play</span>
+            <span role="heading" aria-level={1}>
+              Geo
+            </span>
+            <span role="heading" aria-level={1}>
+              Play
+            </span>
           </h1>
         </section>
         <MenuButtons />

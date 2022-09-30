@@ -1,50 +1,50 @@
-import { screen, fireEvent } from "@testing-library/react";
-import SmallMenu from "../components/SmallMenu";
-import "@testing-library/jest-dom";
-import { renderWithProviders } from "../utils/test-utils";
+import { screen, fireEvent } from '@testing-library/react';
+import SmallMenu from '../components/SmallMenu';
+import '@testing-library/jest-dom';
+import { renderWithProviders } from '../utils/test-utils';
 
-jest.mock("next/router", () => ({ __esModule: true, useRouter: jest.fn() }));
+jest.mock('next/router', () => ({ __esModule: true, useRouter: jest.fn() }));
 
-describe("SmallMenu", () => {
-  it("renders 3 buttons", () => {
+describe('SmallMenu', () => {
+  it('renders 3 buttons', () => {
     renderWithProviders(<SmallMenu />);
 
-    const menuBtns = screen.getAllByRole("button");
+    const menuBtns = screen.getAllByRole('button');
 
     expect(menuBtns.length).toBe(3);
   });
 
-  it("should not render a selection div", () => {
+  it('should not render a selection div', () => {
     renderWithProviders(<SmallMenu />);
 
-    const selectionElement = screen.queryByText("Asia");
+    const selectionElement = screen.queryByText('Asia');
 
     expect(selectionElement).not.toBeInTheDocument();
   });
 
-  it("should render an selection div once the input has been clicked", () => {
+  it('should render an selection div once the input has been clicked', () => {
     renderWithProviders(<SmallMenu />);
 
-    const inputDiv = screen.getByText("Europe");
+    const inputDiv = screen.getByText('Europe');
     fireEvent.click(inputDiv);
 
-    const selectionElement = screen.getByText("Asia");
+    const selectionElement = screen.getByText('Asia');
 
     expect(selectionElement).toBeInTheDocument();
   });
 
-  test("that the input field changes when a new option is clicked", () => {
+  test('that the input field changes when a new option is clicked', () => {
     renderWithProviders(<SmallMenu />);
 
-    const inputDiv = screen.getByTestId("inputDiv");
+    const inputDiv = screen.getByTestId('inputDiv');
 
-    expect(inputDiv).toHaveTextContent("Europe");
+    expect(inputDiv).toHaveTextContent('Europe');
     fireEvent.click(inputDiv);
 
-    const selectionElement = screen.getByText("Asia");
+    const selectionElement = screen.getByText('Asia');
     fireEvent.click(selectionElement);
 
-    expect(inputDiv).toHaveTextContent("Asia");
+    expect(inputDiv).toHaveTextContent('Asia');
   });
 
   // test('that a new page is rendered when the "Ready" button is clicked', () => {
