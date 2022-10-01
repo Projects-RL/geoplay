@@ -1,24 +1,26 @@
-import React, { ChangeEvent, useState } from "react";
-import { useAppDispatch } from "../hooks/hooks";
-import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
-import { handleIsLoggedIn } from "../redux/features/userSlice";
-import style from "../styles/UserAuth.module.css";
-import { signIn, signUp, updateUsername } from "../utils/auth";
+import React, { ChangeEvent, useState } from 'react';
+import { useAppDispatch } from '../hooks/hooks';
+import { handleShowSignIn } from '../redux/features/componentHandlingSlice';
+import { handleIsLoggedIn } from '../redux/features/userSlice';
+import style from '../styles/UserAuth.module.css';
+import { signIn, signUp, updateUsername } from '../utils/auth';
+import { checkForEmptyInputs } from '../utils/helpers';
 
 function UserAuth() {
   const dispatch = useAppDispatch();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const [tab, setTab] = useState("signIn");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [tab, setTab] = useState('signIn');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   function handleOnChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.name === "email") {
+    setErrorMsg('');
+    if (e.target.name === 'email') {
       setEmail(e.target.value);
-    } else if (e.target.name === "password") {
+    } else if (e.target.name === 'password') {
       setPassword(e.target.value);
-    } else if (e.target.name === "username") {
+    } else if (e.target.name === 'username') {
       setUsername(e.target.value);
     }
   }
@@ -28,7 +30,13 @@ function UserAuth() {
     password: string,
     username: string
   ) {
-    if (tab === "signIn") {
+    const emptyInputMessage = checkForEmptyInputs(email, password);
+    if (emptyInputMessage !== '') {
+      setErrorMsg(emptyInputMessage);
+      return;
+    }
+
+    if (tab === 'signIn') {
       const signInResponse = await signIn(email, password);
 
       if (signInResponse.success) {
@@ -37,9 +45,9 @@ function UserAuth() {
       } else {
         setErrorMsg(signInResponse.error);
       }
-    } else if (tab === "signUp") {
+    } else if (tab === 'signUp') {
       if (!username) {
-        setErrorMsg("Choose a username");
+        setErrorMsg('Choose a username');
         return;
       }
       const signUpResponse = await signUp(email, password);
@@ -63,18 +71,18 @@ function UserAuth() {
   }
 
   function emptyInputs() {
-    setEmail("");
-    setPassword("");
-    setUsername("");
+    setEmail('');
+    setPassword('');
+    setUsername('');
   }
 
   return (
     <div className={style.container}>
       <section className={style.tabs}>
         <button
-          className={tab === "signIn" ? style.active : ""}
+          className={tab === 'signIn' ? style.active : ''}
           onClick={() => {
-            setTab("signIn");
+            setTab('signIn');
             emptyInputs();
           }}
         >
@@ -82,16 +90,16 @@ function UserAuth() {
         </button>
         <div className={style.divider}></div>
         <button
-          className={tab === "signUp" ? style.active : ""}
+          className={tab === 'signUp' ? style.active : ''}
           onClick={() => {
-            setTab("signUp");
+            setTab('signUp');
             emptyInputs();
           }}
         >
           Sign up
         </button>
       </section>
-      {tab === "signUp" && (
+      {tab === 'signUp' && (
         <input
           name="username"
           type="text"
@@ -116,7 +124,7 @@ function UserAuth() {
       />
       <input
         type="submit"
-        value={tab === "signIn" ? "Sign in" : "Sign up"}
+        value={tab === 'signIn' ? 'Sign in' : 'Sign up'}
         onClick={() => handleSubmit(email, password, username)}
       />
       {errorMsg && <p>{errorMsg}</p>}

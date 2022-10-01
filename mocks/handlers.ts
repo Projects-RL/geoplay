@@ -16,11 +16,16 @@ export const handlers = [
         password: JSON.parse(req.body).password,
       };
 
+      console.log(userInputs);
+
       if (
         userInputs.email !== 'test@user.com' ||
         userInputs.password !== 'pwd123'
       ) {
+        console.log('bög');
+
         return res(
+          ctx.status(400),
           ctx.json({
             error: 'invalid_grant',
             error_description: 'Invalid login credentials',
@@ -31,8 +36,10 @@ export const handlers = [
         userInputs.email == 'test@user.com' ||
         userInputs.password == 'pwd123'
       ) {
+        console.log('bög1');
         return res(ctx.delay(100), ctx.json(successResponse));
       }
+      console.log('bög2');
     }
   ),
 

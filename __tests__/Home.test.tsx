@@ -33,9 +33,6 @@ describe('Home', () => {
 
     fireEvent.click(profileBtn);
     expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
-
-    // fireEvent.click(screen.getByTestId("overlay"));
-    // expect(screen.queryByPlaceholderText("Email")).not.toBeInTheDocument();
   });
 
   test('sign in correctly', async () => {
@@ -58,29 +55,29 @@ describe('Home', () => {
     expect(screen.queryByPlaceholderText('Email')).toBeNull();
   });
 
-  test('register correctly', async () => {
-    renderWithProviders(<Home isLoggedIn={false} />);
+  // test('register correctly', async () => {
+  //   renderWithProviders(<Home isLoggedIn={false} />);
 
-    // Click on ProfileButton
-    fireEvent.click(screen.getByTestId('profileButton'));
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+  //   // Click on ProfileButton
+  //   fireEvent.click(screen.getByTestId('profileButton'));
+  //   expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
 
-    //Click on SignUp button
-    fireEvent.click(screen.getByRole('button', { name: 'Sign up' }));
+  //   //Click on SignUp button
+  //   fireEvent.click(screen.getByRole('button', { name: 'Sign up' }));
 
-    fireEvent.change(screen.getByPlaceholderText('Username'), {
-      target: { value: userValue.username },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: 'nyttMail@bajs.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: userValue.password },
-    });
-    fireEvent.click(screen.getByDisplayValue('Sign up'));
+  //   fireEvent.change(screen.getByPlaceholderText('Username'), {
+  //     target: { value: userValue.username },
+  //   });
+  //   fireEvent.change(screen.getByPlaceholderText('Email'), {
+  //     target: { value: 'nyttMail@bajs.com' },
+  //   });
+  //   fireEvent.change(screen.getByPlaceholderText('Password'), {
+  //     target: { value: userValue.password },
+  //   });
+  //   fireEvent.click(screen.getByDisplayValue('Sign up'));
 
-    await new Promise((r) => setTimeout(r, 1000));
+  //   await new Promise((r) => setTimeout(r, 1000));
 
-    screen.debug();
-  });
+  //   screen.debug();
+  // });
 });

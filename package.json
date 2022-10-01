@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint ./components/** ./pages/** -c .eslintrc --ext ts,tsx,js,jsx --color",
-    "test": "jest --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "type-check": "tsc",
     "ts-coverage": "typescript-coverage-report",
     "prepush": "yarn type-check && yarn test && yarn lint && echo Looks good, ready to push"
