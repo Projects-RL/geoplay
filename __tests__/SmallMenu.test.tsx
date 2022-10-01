@@ -1,73 +1,63 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import SmallMenu from "../components/SmallMenu";
-import "@testing-library/jest-dom";
-import { Provider } from "react-redux";
-import { store } from "../redux/store";
-import { useRouter } from "next/router";
+import { screen, fireEvent } from '@testing-library/react';
+import SmallMenu from '../components/SmallMenu';
+import '@testing-library/jest-dom';
+import { renderWithProviders } from '../utils/test-utils';
 
-function MockSmallMenu() {
-    return (
-        <Provider store={store}>
-            <SmallMenu />
-        </Provider>
-    );
-}
+jest.mock('next/router', () => ({ __esModule: true, useRouter: jest.fn() }));
 
-jest.mock("next/router", () => ({ __esModule: true, useRouter: jest.fn() }));
+describe('SmallMenu', () => {
+  it('renders 3 buttons', () => {
+    renderWithProviders(<SmallMenu />);
 
-describe("SmallMenu", () => {
-    it("renders 3 buttons", () => {
-        render(<MockSmallMenu />);
+    const menuBtns = screen.getAllByRole('button');
 
-        const menuBtns = screen.getAllByRole("button");
+    expect(menuBtns.length).toBe(3);
+  });
 
-        expect(menuBtns.length).toBe(3);
-    });
+  it('should not render a selection div', () => {
+    renderWithProviders(<SmallMenu />);
 
-    it("should not render a selection div", () => {
-        render(<MockSmallMenu />);
+    const selectionElement = screen.queryByText('Asia');
 
-        const selectionElement = screen.queryByText("Asia");
+    expect(selectionElement).not.toBeInTheDocument();
+  });
 
-        expect(selectionElement).not.toBeInTheDocument();
-    });
+  it('should render an selection div once the input has been clicked', () => {
+    renderWithProviders(<SmallMenu />);
 
-    it("should render an selection div once the input has been clicked", () => {
-        render(<MockSmallMenu />);
+    const inputDiv = screen.getByText('Europe');
+    fireEvent.click(inputDiv);
 
-        const inputDiv = screen.getByText("Europe");
-        fireEvent.click(inputDiv);
+    const selectionElement = screen.getByText('Asia');
 
-        const selectionElement = screen.getByText("Asia");
+    expect(selectionElement).toBeInTheDocument();
+  });
 
-        expect(selectionElement).toBeInTheDocument();
-    });
+  test('that the input field changes when a new option is clicked', () => {
+    renderWithProviders(<SmallMenu />);
 
-    test("that the input field changes when a new option is clicked", () => {
-        render(<MockSmallMenu />);
+    const inputDiv = screen.getByTestId('inputDiv');
 
-        const inputDiv = screen.getByTestId("inputDiv");
+    expect(inputDiv).toHaveTextContent('Europe');
+    fireEvent.click(inputDiv);
 
-        expect(inputDiv).toHaveTextContent("Europe");
-        fireEvent.click(inputDiv);
+    const selectionElement = screen.getByText('Asia');
+    fireEvent.click(selectionElement);
 
-        const selectionElement = screen.getByText("Asia");
-        fireEvent.click(selectionElement);
+    expect(inputDiv).toHaveTextContent('Asia');
+  });
 
-        expect(inputDiv).toHaveTextContent("Asia");
-    });
+  // test('that a new page is rendered when the "Ready" button is clicked', () => {
+  //     const mockRouter = {
+  //         push: jest.fn(), // the component uses `router.push` only
+  //     };
+  //     render(<MockSmallMenu />);
 
-    // test('that a new page is rendered when the "Ready" button is clicked', () => {
-    //     const mockRouter = {
-    //         push: jest.fn(), // the component uses `router.push` only
-    //     };
-    //     render(<MockSmallMenu />);
+  //     const readyButton = screen.getByText("Ready");
+  //     fireEvent.click(readyButton);
 
-    //     const readyButton = screen.getByText("Ready");
-    //     fireEvent.click(readyButton);
+  //     (useRouter as jest.Mock).mockReturnValue(mockRouter);
 
-    //     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-
-    //     expect(mockRouter.push).toHaveBeenCalledWith("/europe");
-    // });
+  //     expect(mockRouter.push).toHaveBeenCalledWith("/europe");
+  // });
 });

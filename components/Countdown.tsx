@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import style from "../styles/Countdown.module.css";
+import React, { useEffect, useRef, useState } from 'react';
+import style from '../styles/Countdown.module.css';
 
 interface Props {
   setCountdownStarted: (countdownStarted: boolean) => void;
@@ -7,7 +7,7 @@ interface Props {
 }
 
 function Countdown({ setCountdownStarted, setGameStarted }: Props) {
-  const countState: string[] = ["3", "2", "1", "GO!"];
+  const countState: string[] = ['3', '2', '1', 'GO!'];
   const [iteration, setIteration] = useState<number>(0);
   const shouldCountdown = useRef<boolean>(true);
 
@@ -16,7 +16,7 @@ function Countdown({ setCountdownStarted, setGameStarted }: Props) {
       startCountdown();
       shouldCountdown.current = false;
     }
-  }, []);
+  }, [startCountdown]);
 
   function startCountdown() {
     const myInterval = setInterval(() => {

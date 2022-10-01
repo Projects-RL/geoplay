@@ -1,5 +1,5 @@
-import { ApiError, User } from "@supabase/supabase-js";
-import { supabase } from "../config/supabase";
+import { User } from '@supabase/supabase-js';
+import { supabase } from '../config/supabase';
 
 interface IStatusObj {
   success: boolean;
@@ -13,13 +13,11 @@ export async function signIn(email: string, password: string) {
     user: null,
     error: null,
   };
-  console.log("hej");
 
   const { user, error } = await supabase.auth.signIn({
     email,
     password,
   });
-  console.log(user);
 
   if (user) {
     statusObj.user = user;
@@ -39,7 +37,12 @@ export async function signUp(email: string, password: string) {
     error: null,
   };
 
+  console.log('email', email);
+  console.log('password', password);
+
   const { user, error } = await supabase.auth.signUp({ email, password });
+  console.log('user', user);
+  console.log('error', error);
 
   if (user) {
     statusObj.user = user;
@@ -54,9 +57,9 @@ export async function signUp(email: string, password: string) {
 
 export async function updateUsername(username: string, id: string) {
   const response = await supabase
-    .from("profile")
+    .from('profile')
     .update({ display_name: username })
-    .eq("id", id)
+    .eq('id', id)
     .select();
 
   return response;

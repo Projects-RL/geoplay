@@ -1,10 +1,15 @@
 import React, { useEffect } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { store } from "../redux/store";
 import { Provider } from "react-redux";
 import { supabase } from "../config/supabase";
 import { AuthChangeEvent, Session } from "@supabase/supabase-js";
+import { configureStore } from "@reduxjs/toolkit";
+import { rootReducer } from "../redux/store";
+
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {

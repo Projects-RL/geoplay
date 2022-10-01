@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
 import {
   continentPick,
   handleCoords,
@@ -13,9 +12,10 @@ import { Coords } from "../interfaces";
 import { continents } from "../continents";
 import LoadingDots from "./LoadingDots";
 import SmallMenuDropdown from "./SmallMenuDropdown";
+import { useAppDispatch } from "../hooks/hooks";
 
 function SmallMenu() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const [inputClick, setInputClick] = useState<boolean>(false);
   const [chosenCountry, setChosenCountry] = useState<string>("Europe");

@@ -1,18 +1,18 @@
-import React, { useRef, useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { Db, MongoClient } from "mongodb";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import styles from "./index.module.css";
-import { mouseMoveEvent, QuizData } from "../../types";
-import { useSelector } from "react-redux";
-
-import type { GetStaticProps } from "next";
-import type { RootState } from "../../redux/store";
-import Objective from "../../components/Objective";
-import Countdown from "../../components/Countdown";
-import GameInfo from "../../components/GameInfo";
-import ReadyUp from "../../components/ReadyUp";
+import React, { useRef, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Db, MongoClient } from 'mongodb';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import styles from './index.module.css';
+import { mouseMoveEvent, QuizData } from '../../types';
+import type { GetStaticProps } from 'next';
+import type { RootState } from '../../redux/store';
+import Objective from '../../components/Objective';
+import Countdown from '../../components/Countdown';
+import GameInfo from '../../components/GameInfo';
+import ReadyUp from '../../components/ReadyUp';
+import { useAppSelector } from '../../hooks/hooks';
+import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 interface Props {
   dataToReturn: QuizData;
@@ -37,11 +37,11 @@ function GamePage({ dataToReturn }: Props) {
   const [correctCountriesClickedWrong, setCorrectCountriesClickedWrong] =
     useState<string[]>([]);
   const countriesList = useRef<string[]>([]);
-  const [answer, setAnswer] = useState<string>("");
-  const coords = useSelector((state: RootState) => {
+  const [answer, setAnswer] = useState<string>('');
+  const coords = useAppSelector((state: RootState) => {
     return state.gameOptions.coordinates;
   });
-  const zoomLevel = useSelector((state: RootState) => {
+  const zoomLevel = useAppSelector((state: RootState) => {
     return state.gameOptions.zoom;
   });
 
@@ -51,9 +51,9 @@ function GamePage({ dataToReturn }: Props) {
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
   // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  let hoveredCountryId: string | number | undefined;
+  let hoveredCountryId = useRef<number | undefined>();
 
-  const playerIsReady = useSelector((state: RootState) => {
+  const playerIsReady = useAppSelector((state: RootState) => {
     return state.gameOptions.ready;
   });
 
@@ -73,114 +73,111 @@ function GamePage({ dataToReturn }: Props) {
 
   useEffect(() => {
     if (!playerIsReady) {
-      router.push("/");
+      router.push('/');
     }
     if (map.current) return;
 
     map.current = new mapboxgl.Map({
       accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
       container: mapContainer.current!,
-      style: "mapbox://styles/tjorben/cl3t89ay5000615knxkcvfr67",
+      style: 'mapbox://styles/tjorben/cl3t89ay5000615knxkcvfr67',
       center: [coords.lng, coords.lat],
       zoom: zoomLevel,
     });
 
-    map.current.on("load", () => {
-      map.current?.addSource("countries", {
-        type: "geojson",
-        data: dataToReturn as any,
+    map.current.on('load', () => {
+      map.current?.addSource('countries', {
+        type: 'geojson',
+        data: dataToReturn as FeatureCollection<Geometry, GeoJsonProperties>,
         generateId: true,
       });
 
       // Whn the style has loaded, this code will run
-      map.current?.on("styledata", () => {
+      map.current?.on('styledata', () => {
         // here we check if the layer already exists we cancel the function
-        if (map.current?.getLayer("country-fills")) return;
+        if (map.current?.getLayer('country-fills')) return;
         map.current?.addLayer({
-          id: "country-fills",
-          type: "fill",
-          source: "countries",
+          id: 'country-fills',
+          type: 'fill',
+          source: 'countries',
           layout: {},
           paint: {
-            "fill-color": [
-              "case",
-              ["==", ["feature-state", "answer"], "correct"], // if correct == true
-              "#04ff86", // ...then color the polygon this color
-              ["==", ["feature-state", "answer"], "incorrect"], // if correct == false
-              "#e51b0e", // ...then color the polygon this color
-              ["==", ["feature-state", "hover"], true], // if the polygon is being hovered over
-              "#fff", // ...then color the polygon white
-              "#000", // this is the fallback value if neither of the cases above happens
+            'fill-color': [
+              'case',
+              ['==', ['feature-state', 'answer'], 'correct'], // if correct == true
+              '#04ff86', // ...then color the polygon this color
+              ['==', ['feature-state', 'answer'], 'incorrect'], // if correct == false
+              '#e51b0e', // ...then color the polygon this color
+              ['==', ['feature-state', 'hover'], true], // if the polygon is being hovered over
+              '#fff', // ...then color the polygon white
+              '#000', // this is the fallback value if neither of the cases above happens
             ],
-            "fill-opacity": 0.5,
+            'fill-opacity': 0.5,
           },
         });
 
         map.current?.addLayer({
-          id: "borders",
-          type: "line",
-          source: "countries",
+          id: 'borders',
+          type: 'line',
+          source: 'countries',
           layout: {},
           paint: {
-            "line-color": "#ECA400",
-            "line-width": 2,
+            'line-color': '#ECA400',
+            'line-width': 2,
           },
         });
       });
     });
-    map.current?.on("mouseenter", "country-fills", () => {
+    map.current?.on('mouseenter', 'country-fills', () => {
       if (!map.current) return;
-      map.current.getCanvas().style.cursor = "pointer";
+      map.current.getCanvas().style.cursor = 'pointer';
     });
 
-    map.current?.on("mousemove", "country-fills", (e: mouseMoveEvent) => {
+    map.current?.on('mousemove', 'country-fills', (e: mouseMoveEvent) => {
       const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
         e.features;
 
       if (mapFeatures && mapFeatures.length > 0) {
-        if (hoveredCountryId && hoveredCountryId >= 0) {
+        if (hoveredCountryId.current && hoveredCountryId.current >= 0) {
           map.current?.setFeatureState(
-            { source: "countries", id: hoveredCountryId },
+            { source: 'countries', id: hoveredCountryId.current },
             { hover: false }
           );
         }
-        hoveredCountryId = mapFeatures[0].id;
+        hoveredCountryId.current = mapFeatures[0].id as number;
         map.current?.setFeatureState(
-          { source: "countries", id: hoveredCountryId },
+          { source: 'countries', id: hoveredCountryId.current },
           { hover: true }
         );
       }
     });
-    map.current?.on("mouseleave", "country-fills", () => {
+    map.current?.on('mouseleave', 'country-fills', () => {
       if (!map.current) return;
-      map.current.getCanvas().style.cursor = "";
+      map.current.getCanvas().style.cursor = '';
 
-      if (hoveredCountryId !== null) {
+      if (hoveredCountryId.current !== null) {
         map.current.setFeatureState(
-          { source: "countries", id: hoveredCountryId },
+          { source: 'countries', id: hoveredCountryId.current },
           { hover: false }
         );
       }
 
-      hoveredCountryId = undefined;
+      hoveredCountryId.current = undefined;
     });
-    map.current.on("click", "country-fills", (e: mouseMoveEvent) => {
+    map.current.on('click', 'country-fills', (e: mouseMoveEvent) => {
       if (!countriesList) return;
 
       const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
         e.features;
 
-      const countryID = mapFeatures?.[0].id;
+      const countryID = mapFeatures?.[0].id as number | undefined;
       const countryName = mapFeatures?.[0].properties?.name;
 
-      const countryObj: {
-        countryID: string | number | undefined;
-        countryName: string;
-      } = {
+      const countryObj: ICountry = {
         countryID,
         countryName,
       };
-      setClickedCountries((prevValue: any) => {
+      setClickedCountries((prevValue): ICountry[] => {
         return [...prevValue, countryObj];
       });
 
@@ -194,7 +191,15 @@ function GamePage({ dataToReturn }: Props) {
     });
 
     populateCountries();
-  }, []);
+  }, [
+    coords.lat,
+    coords.lng,
+    dataToReturn,
+    playerIsReady,
+    populateCountries,
+    router,
+    zoomLevel,
+  ]);
 
   useEffect(() => {
     const index: number = clickedCountries.length;
@@ -204,13 +209,13 @@ function GamePage({ dataToReturn }: Props) {
     if (!pickedCountry) return;
 
     if (pickedCountry.countryName === correctCountry) {
-      setAnswer("correct");
-      setCorrectClickedCountries((prevValue: any) => {
+      setAnswer('correct');
+      setCorrectClickedCountries((prevValue: string[]) => {
         return [...prevValue, correctCountry];
       });
     } else {
-      setAnswer("incorrect");
-      setCorrectCountriesClickedWrong((prevValue: any) => {
+      setAnswer('incorrect');
+      setCorrectCountriesClickedWrong((prevValue: string[]) => {
         return [...prevValue, correctCountry];
       });
 
@@ -221,11 +226,12 @@ function GamePage({ dataToReturn }: Props) {
       if (containCountry) return;
 
       setTimeout(() => {
-        setAnswer("changeBack");
+        setAnswer('changeBack');
       }, 200);
     }
 
     isGameOver();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickedCountries]);
 
   useEffect(() => {
@@ -234,59 +240,60 @@ function GamePage({ dataToReturn }: Props) {
 
     if (!pickedCountry) return;
 
-    if (answer === "") return;
+    if (answer === '') return;
 
-    if (answer === "correct") {
+    if (answer === 'correct') {
       map.current?.setFeatureState(
-        { source: "countries", id: pickedCountry.countryID },
+        { source: 'countries', id: pickedCountry.countryID },
         {
           answer: answer,
         }
       );
-      setAnswer("");
+      setAnswer('');
       return;
     }
     if (correctClickedCountries.includes(pickedCountry.countryName)) {
-      console.log("finns redan");
-      setAnswer("");
+      console.log('finns redan');
+      setAnswer('');
       colorCorrectCountry(index);
       return;
     }
-    if (answer === "incorrect") {
+    if (answer === 'incorrect') {
       map.current?.setFeatureState(
-        { source: "countries", id: pickedCountry.countryID },
+        { source: 'countries', id: pickedCountry.countryID },
         {
           answer: answer,
         }
       );
       colorCorrectCountry(index);
     }
-    if (answer === "changeBack") {
+    if (answer === 'changeBack') {
       map.current?.setFeatureState(
-        { source: "countries", id: pickedCountry.countryID },
+        { source: 'countries', id: pickedCountry.countryID },
         {
           answer: answer,
         }
       );
     }
 
-    hoveredCountryId = undefined;
-    setAnswer("");
+    hoveredCountryId.current = undefined;
+    setAnswer('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);
 
   function colorCorrectCountry(index: number) {
     const correctCountry: string = countriesList.current[index - 1];
     const features: mapboxgl.MapboxGeoJSONFeature[] | undefined =
       map.current?.queryRenderedFeatures(undefined, {
-        layers: ["country-fills"],
+        layers: ['country-fills'],
       });
 
-    features?.forEach((feature: any) => {
-      if (feature.properties.name === correctCountry) {
+    features?.forEach((feature: mapboxgl.MapboxGeoJSONFeature) => {
+      if (feature?.properties?.name === correctCountry) {
         map.current?.setFeatureState(
-          { source: "countries", id: feature.id },
+          { source: 'countries', id: feature.id },
           {
-            answer: "incorrect",
+            answer: 'incorrect',
           }
         );
       }
@@ -300,15 +307,15 @@ function GamePage({ dataToReturn }: Props) {
     ) {
       if (gameIsOver) return;
 
-      console.log("spelet är slut");
-      console.log("rätta svar", correctClickedCountries.length);
+      console.log('spelet är slut');
+      console.log('rätta svar', correctClickedCountries.length);
       setGameIsOver(true);
     }
   }
 
   return (
     <div ref={mapContainer} className={styles.container}>
-      {typeof iteration === "number" && gameStarted && !gameIsOver && (
+      {typeof iteration === 'number' && gameStarted && !gameIsOver && (
         <Objective objective={countriesList.current[iteration]} />
       )}
       {!playerHasClickedReady && (
@@ -349,27 +356,27 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
   const params: string | undefined | string[] = context.params.continent;
 
-  if (typeof params !== "string") {
+  if (typeof params !== 'string') {
     return { props: {} };
   }
-  const continentString: string = params?.replace(" ", "");
+  const continentString: string = params?.replace(' ', '');
 
   const user: string | undefined = process.env.DB_USER;
   const password: string | undefined = process.env.DB_PASSWORD;
   const databaseName: string | undefined = process.env.DB_NAME;
 
   const client = await MongoClient.connect(
-    "mongodb+srv://" +
+    'mongodb+srv://' +
       user +
-      ":" +
+      ':' +
       password +
-      "@cluster0.wb3yq.mongodb.net/" +
+      '@cluster0.wb3yq.mongodb.net/' +
       databaseName +
-      "?retryWrites=true&w=majority"
+      '?retryWrites=true&w=majority'
   );
 
   const db: Db = client.db();
-  const geojsonData = db.collection("geojsonData");
+  const geojsonData = db.collection('geojsonData');
 
   const data = await geojsonData.find().toArray();
 
@@ -402,23 +409,23 @@ export async function getStaticPaths() {
   const databaseName: string | undefined = process.env.DB_NAME;
 
   const client: MongoClient = await MongoClient.connect(
-    "mongodb+srv://" +
+    'mongodb+srv://' +
       user +
-      ":" +
+      ':' +
       password +
-      "@cluster0.wb3yq.mongodb.net/" +
+      '@cluster0.wb3yq.mongodb.net/' +
       databaseName +
-      "?retryWrites=true&w=majority"
+      '?retryWrites=true&w=majority'
   );
 
   const db: Db = client.db();
-  const geojsonData = db.collection("geojsonData");
+  const geojsonData = db.collection('geojsonData');
 
   const data = await geojsonData.find().toArray();
 
   const continentsArray: string[] = [];
   for (const continent of Object.entries(data[0])) {
-    if (continent[0] !== "_id") {
+    if (continent[0] !== '_id') {
       continentsArray.push(continent[0].toLocaleLowerCase());
     }
   }

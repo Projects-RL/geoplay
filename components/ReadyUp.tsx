@@ -1,7 +1,7 @@
 import React from "react";
 import style from "../styles/ReadyUp.module.css";
-import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { useAppSelector } from "../hooks/hooks";
 
 interface Props {
   setPlayerHasClickedReady: (playerHasClickedReady: boolean) => void;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 function ReadyUp({ setPlayerHasClickedReady, setCountdownStarted }: Props) {
-  const continent = useSelector((state: RootState) => {
+  const continent = useAppSelector((state: RootState) => {
     return state.gameOptions.continent;
   });
 

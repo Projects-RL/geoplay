@@ -1,0 +1,459 @@
+
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <title>index.tsx</title>
+      <link href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css" type="text/css" rel="stylesheet">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/mode/javascript/javascript.min.js" type="text/javascript" charset="utf-8"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/codemirror.min.css" type="text/css" rel="stylesheet">
+<script src="../../../assets/source-file.js" type="text/javascript" charset="utf-8"></script>
+<link href="../../../assets/source-file.css" type="text/css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="margin-top:3em" class="ui container"><h1 class="ui header"><a href="../../../index.html">TypeScript coverage report</a></h1><table style="margin-top:2em" class="ui celled table"><thead class=""><tr class=""><th class="">Filename</th><th class="">Percent</th><th class="">Threshold</th><th class="">Total</th><th class="">Covered</th><th class="">Uncovered</th></tr></thead><tbody class=""><tr class="positive"><td class="">pages/[continent]/index.tsx</td><td class="">98.81%</td><td class="">80%</td><td class="">587</td><td class="">580</td><td class="">7</td></tr></tbody></table><textarea id="editor" readonly="" style="margin-top:3em">import React, { useRef, useEffect, useState } from &#x27;react&#x27;;
+import { useRouter } from &#x27;next/router&#x27;;
+import { Db, MongoClient } from &#x27;mongodb&#x27;;
+import mapboxgl from &#x27;mapbox-gl&#x27;;
+import &#x27;mapbox-gl/dist/mapbox-gl.css&#x27;;
+import styles from &#x27;./index.module.css&#x27;;
+import { mouseMoveEvent, QuizData } from &#x27;../../types&#x27;;
+import type { GetStaticProps } from &#x27;next&#x27;;
+import type { RootState } from &#x27;../../redux/store&#x27;;
+import Objective from &#x27;../../components/Objective&#x27;;
+import Countdown from &#x27;../../components/Countdown&#x27;;
+import GameInfo from &#x27;../../components/GameInfo&#x27;;
+import ReadyUp from &#x27;../../components/ReadyUp&#x27;;
+import { useAppSelector } from &#x27;../../hooks/hooks&#x27;;
+import { FeatureCollection, GeoJsonProperties, Geometry } from &#x27;geojson&#x27;;
+
+interface Props {
+  dataToReturn: QuizData;
+  continent: string;
+}
+
+interface ICountry {
+  countryId?: number;
+  countryID?: number;
+  countryName: string;
+}
+
+function GamePage({ dataToReturn }: Props) {
+  const router = useRouter();
+  const mapContainer = useRef&lt;HTMLDivElement&gt;(null);
+  const map = useRef&lt;mapboxgl.Map | null&gt;(null);
+  const [iteration, setIteration] = useState&lt;number&gt;();
+  const [clickedCountries, setClickedCountries] = useState&lt;ICountry[]&gt;([]);
+  const [correctClickedCountries, setCorrectClickedCountries] = useState&lt;
+    string[]
+  &gt;([]);
+  const [correctCountriesClickedWrong, setCorrectCountriesClickedWrong] =
+    useState&lt;string[]&gt;([]);
+  const countriesList = useRef&lt;string[]&gt;([]);
+  const [answer, setAnswer] = useState&lt;string&gt;(&#x27;&#x27;);
+  const coords = useAppSelector((state: RootState) =&gt; {
+    return state.gameOptions.coordinates;
+  });
+  const zoomLevel = useAppSelector((state: RootState) =&gt; {
+    return state.gameOptions.zoom;
+  });
+
+  const [playerHasClickedReady, setPlayerHasClickedReady] =
+    useState&lt;boolean&gt;(false);
+  const [countdownStarted, setCountdownStarted] = useState&lt;boolean&gt;(false);
+  const [gameStarted, setGameStarted] = useState&lt;boolean&gt;(false);
+  const [gameIsOver, setGameIsOver] = useState&lt;boolean&gt;(false);
+  // const [showStatsModal, setShowStatsModal] = useState&lt;boolean&gt;(false);
+  let hoveredCountryId = useRef&lt;number | undefined&gt;();
+
+  const playerIsReady = useAppSelector((state: RootState) =&gt; {
+    return state.gameOptions.ready;
+  });
+
+  function populateCountries() {
+    const countries: string[] = dataToReturn.features.map((country) =&gt; {
+      return country.properties.name;
+    });
+
+    shuffleArray(countries);
+    countriesList.current = countries;
+    setIteration(0);
+  }
+
+  function shuffleArray(arr: string[]) {
+    arr.sort(() =&gt; Math.random() - 0.5);
+  }
+
+  useEffect(() =&gt; {
+    if (!playerIsReady) {
+      router.push(&#x27;/&#x27;);
+    }
+    if (map.current) return;
+
+    map.current = new mapboxgl.Map({
+      accessToken: process.env.NEXT_PUBLIC_MB_ACCESS_TOKEN,
+      container: mapContainer.current!,
+      style: &#x27;mapbox://styles/tjorben/cl3t89ay5000615knxkcvfr67&#x27;,
+      center: [coords.lng, coords.lat],
+      zoom: zoomLevel,
+    });
+
+    map.current.on(&#x27;load&#x27;, () =&gt; {
+      map.current?.addSource(&#x27;countries&#x27;, {
+        type: &#x27;geojson&#x27;,
+        data: dataToReturn as FeatureCollection&lt;Geometry, GeoJsonProperties&gt;,
+        generateId: true,
+      });
+
+      // Whn the style has loaded, this code will run
+      map.current?.on(&#x27;styledata&#x27;, () =&gt; {
+        // here we check if the layer already exists we cancel the function
+        if (map.current?.getLayer(&#x27;country-fills&#x27;)) return;
+        map.current?.addLayer({
+          id: &#x27;country-fills&#x27;,
+          type: &#x27;fill&#x27;,
+          source: &#x27;countries&#x27;,
+          layout: {},
+          paint: {
+            &#x27;fill-color&#x27;: [
+              &#x27;case&#x27;,
+              [&#x27;==&#x27;, [&#x27;feature-state&#x27;, &#x27;answer&#x27;], &#x27;correct&#x27;], // if correct == true
+              &#x27;#04ff86&#x27;, // ...then color the polygon this color
+              [&#x27;==&#x27;, [&#x27;feature-state&#x27;, &#x27;answer&#x27;], &#x27;incorrect&#x27;], // if correct == false
+              &#x27;#e51b0e&#x27;, // ...then color the polygon this color
+              [&#x27;==&#x27;, [&#x27;feature-state&#x27;, &#x27;hover&#x27;], true], // if the polygon is being hovered over
+              &#x27;#fff&#x27;, // ...then color the polygon white
+              &#x27;#000&#x27;, // this is the fallback value if neither of the cases above happens
+            ],
+            &#x27;fill-opacity&#x27;: 0.5,
+          },
+        });
+
+        map.current?.addLayer({
+          id: &#x27;borders&#x27;,
+          type: &#x27;line&#x27;,
+          source: &#x27;countries&#x27;,
+          layout: {},
+          paint: {
+            &#x27;line-color&#x27;: &#x27;#ECA400&#x27;,
+            &#x27;line-width&#x27;: 2,
+          },
+        });
+      });
+    });
+    map.current?.on(&#x27;mouseenter&#x27;, &#x27;country-fills&#x27;, () =&gt; {
+      if (!map.current) return;
+      map.current.getCanvas().style.cursor = &#x27;pointer&#x27;;
+    });
+
+    map.current?.on(&#x27;mousemove&#x27;, &#x27;country-fills&#x27;, (e: mouseMoveEvent) =&gt; {
+      const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+        e.features;
+
+      if (mapFeatures &amp;&amp; mapFeatures.length &gt; 0) {
+        if (hoveredCountryId.current &amp;&amp; hoveredCountryId.current &gt;= 0) {
+          map.current?.setFeatureState(
+            { source: &#x27;countries&#x27;, id: hoveredCountryId.current },
+            { hover: false }
+          );
+        }
+        hoveredCountryId.current = mapFeatures[0].id as number;
+        map.current?.setFeatureState(
+          { source: &#x27;countries&#x27;, id: hoveredCountryId.current },
+          { hover: true }
+        );
+      }
+    });
+    map.current?.on(&#x27;mouseleave&#x27;, &#x27;country-fills&#x27;, () =&gt; {
+      if (!map.current) return;
+      map.current.getCanvas().style.cursor = &#x27;&#x27;;
+
+      if (hoveredCountryId.current !== null) {
+        map.current.setFeatureState(
+          { source: &#x27;countries&#x27;, id: hoveredCountryId.current },
+          { hover: false }
+        );
+      }
+
+      hoveredCountryId.current = undefined;
+    });
+    map.current.on(&#x27;click&#x27;, &#x27;country-fills&#x27;, (e: mouseMoveEvent) =&gt; {
+      if (!countriesList) return;
+
+      const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+        e.features;
+
+      const countryID = mapFeatures?.[0].id as number | undefined;
+      const countryName = mapFeatures?.[0].properties?.name;
+
+      const countryObj: ICountry = {
+        countryID,
+        countryName,
+      };
+      setClickedCountries((prevValue): ICountry[] =&gt; {
+        return [...prevValue, countryObj];
+      });
+
+      setIteration((prevValue) =&gt; {
+        if (prevValue) {
+          return prevValue + 1;
+        } else {
+          return 1;
+        }
+      });
+    });
+
+    populateCountries();
+  }, [
+    coords.lat,
+    coords.lng,
+    dataToReturn,
+    playerIsReady,
+    populateCountries,
+    router,
+    zoomLevel,
+  ]);
+
+  useEffect(() =&gt; {
+    const index: number = clickedCountries.length;
+    const pickedCountry: ICountry = clickedCountries[index - 1];
+    const correctCountry: string = countriesList.current[index - 1];
+
+    if (!pickedCountry) return;
+
+    if (pickedCountry.countryName === correctCountry) {
+      setAnswer(&#x27;correct&#x27;);
+      setCorrectClickedCountries((prevValue: string[]) =&gt; {
+        return [...prevValue, correctCountry];
+      });
+    } else {
+      setAnswer(&#x27;incorrect&#x27;);
+      setCorrectCountriesClickedWrong((prevValue: string[]) =&gt; {
+        return [...prevValue, correctCountry];
+      });
+
+      const containCountry: boolean = correctCountriesClickedWrong.includes(
+        pickedCountry.countryName
+      );
+
+      if (containCountry) return;
+
+      setTimeout(() =&gt; {
+        setAnswer(&#x27;changeBack&#x27;);
+      }, 200);
+    }
+
+    isGameOver();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clickedCountries]);
+
+  useEffect(() =&gt; {
+    const index: number = clickedCountries.length;
+    const pickedCountry: ICountry = clickedCountries[index - 1];
+
+    if (!pickedCountry) return;
+
+    if (answer === &#x27;&#x27;) return;
+
+    if (answer === &#x27;correct&#x27;) {
+      map.current?.setFeatureState(
+        { source: &#x27;countries&#x27;, id: pickedCountry.countryID },
+        {
+          answer: answer,
+        }
+      );
+      setAnswer(&#x27;&#x27;);
+      return;
+    }
+    if (correctClickedCountries.includes(pickedCountry.countryName)) {
+      console.log(&#x27;finns redan&#x27;);
+      setAnswer(&#x27;&#x27;);
+      colorCorrectCountry(index);
+      return;
+    }
+    if (answer === &#x27;incorrect&#x27;) {
+      map.current?.setFeatureState(
+        { source: &#x27;countries&#x27;, id: pickedCountry.countryID },
+        {
+          answer: answer,
+        }
+      );
+      colorCorrectCountry(index);
+    }
+    if (answer === &#x27;changeBack&#x27;) {
+      map.current?.setFeatureState(
+        { source: &#x27;countries&#x27;, id: pickedCountry.countryID },
+        {
+          answer: answer,
+        }
+      );
+    }
+
+    hoveredCountryId.current = undefined;
+    setAnswer(&#x27;&#x27;);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answer]);
+
+  function colorCorrectCountry(index: number) {
+    const correctCountry: string = countriesList.current[index - 1];
+    const features: mapboxgl.MapboxGeoJSONFeature[] | undefined =
+      map.current?.queryRenderedFeatures(undefined, {
+        layers: [&#x27;country-fills&#x27;],
+      });
+
+    features?.forEach((feature: mapboxgl.MapboxGeoJSONFeature) =&gt; {
+      if (feature?.properties?.name === correctCountry) {
+        map.current?.setFeatureState(
+          { source: &#x27;countries&#x27;, id: feature.id },
+          {
+            answer: &#x27;incorrect&#x27;,
+          }
+        );
+      }
+    });
+  }
+
+  function isGameOver() {
+    if (
+      countriesList.current.length &gt; 0 &amp;&amp;
+      countriesList.current.length === clickedCountries.length
+    ) {
+      if (gameIsOver) return;
+
+      console.log(&#x27;spelet är slut&#x27;);
+      console.log(&#x27;rätta svar&#x27;, correctClickedCountries.length);
+      setGameIsOver(true);
+    }
+  }
+
+  return (
+    &lt;div ref={mapContainer} className={styles.container}&gt;
+      {typeof iteration === &#x27;number&#x27; &amp;&amp; gameStarted &amp;&amp; !gameIsOver &amp;&amp; (
+        &lt;Objective objective={countriesList.current[iteration]} /&gt;
+      )}
+      {!playerHasClickedReady &amp;&amp; (
+        &lt;ReadyUp
+          setPlayerHasClickedReady={setPlayerHasClickedReady}
+          setCountdownStarted={setCountdownStarted}
+        /&gt;
+      )}
+      {countdownStarted &amp;&amp; (
+        &lt;Countdown
+          setCountdownStarted={setCountdownStarted}
+          setGameStarted={setGameStarted}
+        /&gt;
+      )}
+      {!gameStarted &amp;&amp; &lt;div className={styles.overlay}&gt;&lt;/div&gt;}
+      {gameStarted &amp;&amp; (
+        &lt;GameInfo
+          correctClickedCountries={correctClickedCountries}
+          countriesList={countriesList.current}
+          gameIsOver={gameIsOver}
+        /&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default GamePage;
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+
+export const getStaticProps: GetStaticProps = async (context) =&gt; {
+  if (!context.params) {
+    return { props: {} };
+  }
+  const params: string | undefined | string[] = context.params.continent;
+
+  if (typeof params !== &#x27;string&#x27;) {
+    return { props: {} };
+  }
+  const continentString: string = params?.replace(&#x27; &#x27;, &#x27;&#x27;);
+
+  const user: string | undefined = process.env.DB_USER;
+  const password: string | undefined = process.env.DB_PASSWORD;
+  const databaseName: string | undefined = process.env.DB_NAME;
+
+  const client = await MongoClient.connect(
+    &#x27;mongodb+srv://&#x27; +
+      user +
+      &#x27;:&#x27; +
+      password +
+      &#x27;@cluster0.wb3yq.mongodb.net/&#x27; +
+      databaseName +
+      &#x27;?retryWrites=true&amp;w=majority&#x27;
+  );
+
+  const db: Db = client.db();
+  const geojsonData = db.collection(&#x27;geojsonData&#x27;);
+
+  const data = await geojsonData.find().toArray();
+
+  let dataToFetch: string;
+  for (const continent of Object.entries(data[0])) {
+    if (continent[0].toLocaleLowerCase() === continentString) {
+      dataToFetch = continent[1];
+    }
+  }
+
+  async function fetchJsonData() {
+    const response: Response = await fetch(dataToFetch);
+    const data = await response.json();
+
+    return data;
+  }
+  const dataToReturn = await fetchJsonData();
+
+  return {
+    props: {
+      dataToReturn,
+    },
+    revalidate: 1,
+  };
+};
+
+export async function getStaticPaths() {
+  const user: string | undefined = process.env.DB_USER;
+  const password: string | undefined = process.env.DB_PASSWORD;
+  const databaseName: string | undefined = process.env.DB_NAME;
+
+  const client: MongoClient = await MongoClient.connect(
+    &#x27;mongodb+srv://&#x27; +
+      user +
+      &#x27;:&#x27; +
+      password +
+      &#x27;@cluster0.wb3yq.mongodb.net/&#x27; +
+      databaseName +
+      &#x27;?retryWrites=true&amp;w=majority&#x27;
+  );
+
+  const db: Db = client.db();
+  const geojsonData = db.collection(&#x27;geojsonData&#x27;);
+
+  const data = await geojsonData.find().toArray();
+
+  const continentsArray: string[] = [];
+  for (const continent of Object.entries(data[0])) {
+    if (continent[0] !== &#x27;_id&#x27;) {
+      continentsArray.push(continent[0].toLocaleLowerCase());
+    }
+  }
+
+  return {
+    fallback: false,
+    paths: continentsArray.map((continent) =&gt; ({
+      params: {
+        continent: continent.toString(),
+      },
+    })),
+  };
+}
+</textarea><pre id="annotations" style="display:none">[{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:173,&quot;character&quot;:12,&quot;text&quot;:&quot;countryName&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:173,&quot;character&quot;:55,&quot;text&quot;:&quot;name&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:291,&quot;character&quot;:31,&quot;text&quot;:&quot;name&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:391,&quot;character&quot;:10,&quot;text&quot;:&quot;data&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:393,&quot;character&quot;:11,&quot;text&quot;:&quot;data&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:395,&quot;character&quot;:8,&quot;text&quot;:&quot;dataToReturn&quot;,&quot;kind&quot;:1},{&quot;file&quot;:&quot;pages/[continent]/index.tsx&quot;,&quot;line&quot;:399,&quot;character&quot;:6,&quot;text&quot;:&quot;dataToReturn&quot;,&quot;kind&quot;:1}]</pre></div>
+    <p class="footer-text">TypeScript Coverage Report generated by <a href="https://github.com/plantain-00/type-coverage">type-coverage</a> and <a href="https://github.com/alexcanessa/typescript-coverage-report">typescript-coverage-report</a> at Fri, 30 Sep 2022 18:16:27 GMT</p>
+    </body>
+  </html>
+  

@@ -1,10 +1,10 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "../hooks/hooks";
 import { handleShowSignIn } from "../redux/features/componentHandlingSlice";
 import style from "../styles/Overlay.module.css";
 
 function Overlay() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   function handleOnClick() {
     dispatch(handleShowSignIn(false));
   }
