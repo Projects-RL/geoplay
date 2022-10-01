@@ -11,7 +11,7 @@ describe('SmallMenu', () => {
 
     const menuBtns = screen.getAllByRole('button');
 
-    expect(menuBtns.length).toBe(3);
+    expect(menuBtns.length).toBe(1);
   });
 
   it('should not render a selection div', () => {

@@ -78,6 +78,6 @@ describe('Home', () => {
 
   //   await new Promise((r) => setTimeout(r, 1000));
 
-  //   screen.debug();
+  //
   // });
 });

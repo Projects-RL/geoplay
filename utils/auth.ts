@@ -37,12 +37,7 @@ export async function signUp(email: string, password: string) {
     error: null,
   };
 
-  console.log('email', email);
-  console.log('password', password);
-
   const { user, error } = await supabase.auth.signUp({ email, password });
-  console.log('user', user);
-  console.log('error', error);
 
   if (user) {
     statusObj.user = user;
