@@ -7,10 +7,14 @@ import { CgProfile } from 'react-icons/cg';
 import UserAuth from '../components/UserAuth';
 import Overlay from '../components/Overlay';
 import { RootState } from '../redux/store';
-import { handleShowSignIn } from '../redux/features/componentHandlingSlice';
+import {
+  handleShowSideMenu,
+  handleShowSignIn,
+} from '../redux/features/componentHandlingSlice';
 import { handleIsLoggedIn } from '../redux/features/userSlice';
 import { supabase } from '../config/supabase';
 import { useAppDispatch, useAppSelector } from '../hooks/hooks';
+import SideMenu from '../components/SideMenu';
 
 interface Props {
   isLoggedIn: boolean;
@@ -28,10 +32,13 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
   const userIsLoggedIn = useAppSelector((state: RootState) => {
     return state.userSlice.isLoggedIn;
   });
+  const showSideMenu = useAppSelector((state: RootState) => {
+    return state.componentHandling.showSideMenu;
+  });
 
   function handleProfileButtonClick() {
     if (isLoggedIn || userIsLoggedIn) {
-      console.log('signed in wee');
+      dispatch(handleShowSideMenu(true));
     } else {
       dispatch(handleShowSignIn(true));
     }
@@ -43,6 +50,7 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
         <title>GeoPlay</title>
         <meta name="description" content="Test you geography skills" />
       </Head>
+
       <div className={style.container}>
         <button
           className={style.profileButton}
@@ -53,7 +61,8 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
         </button>
 
         {showSignIn && <UserAuth />}
-        {showSignIn && <Overlay />}
+        {showSideMenu && <SideMenu />}
+        {(showSignIn || showSideMenu) && <Overlay />}
         <section className={style.header}>
           <h1>
             <span role="heading" aria-level={1}>
