@@ -1,6 +1,8 @@
 import React from 'react';
+import { supabase } from '../config/supabase';
 import { useAppDispatch } from '../hooks/hooks';
 import { handleShowSideMenu } from '../redux/features/componentHandlingSlice';
+import { handleIsLoggedIn } from '../redux/features/userSlice';
 import style from '../styles/SideMenu.module.css';
 
 function SideMenu() {
@@ -8,6 +10,18 @@ function SideMenu() {
 
   function handleExit() {
     dispatch(handleShowSideMenu(false));
+  }
+
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log(error);
+      return;
+    } else {
+      dispatch(handleShowSideMenu(false));
+      dispatch(handleIsLoggedIn(false));
+    }
   }
 
   return (
@@ -18,7 +32,7 @@ function SideMenu() {
       <div className={style.btnContainer}>
         <button>Profile Page</button>
         <button>Settings</button>
-        <button>Sign Out</button>
+        <button onClick={handleSignOut}>Sign Out</button>
       </div>
     </div>
   );
