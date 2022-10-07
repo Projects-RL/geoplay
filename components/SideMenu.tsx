@@ -15,6 +15,9 @@ function SideMenu() {
   async function handleSignOut() {
     const { error } = await supabase.auth.signOut();
 
+    console.log('halloj');
+    console.log(error);
+
     if (error) {
       console.log(error);
       return;

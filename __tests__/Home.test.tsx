@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import Home from '../pages';
 import { server } from '../mocks/server';
 import { renderWithProviders } from '../utils/test-utils';
+import SideMenu from '../components/SideMenu';
 
 describe('Home', () => {
   beforeAll(() => {
@@ -24,38 +25,84 @@ describe('Home', () => {
     email: 'test@user.com',
     password: 'pwd123',
   };
+  describe('sign in modal', () => {
+    test('Modal renders when the profile button is clicked, and it disappears when the overlay is clicked', () => {
+      renderWithProviders(<Home isLoggedIn={false} />);
 
-  test('Modal renders when the profile button is clicked, and it disappears when the overlay is clicked', () => {
-    renderWithProviders(<Home isLoggedIn={false} />);
+      const profileBtn = screen.getByTestId('profileButton');
+      expect(screen.queryByPlaceholderText('Email')).not.toBeInTheDocument();
 
-    const profileBtn = screen.getByTestId('profileButton');
-    expect(screen.queryByPlaceholderText('Email')).not.toBeInTheDocument();
+      fireEvent.click(profileBtn);
+      expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+    });
 
-    fireEvent.click(profileBtn);
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+    test('sign in correctly', async () => {
+      renderWithProviders(<Home isLoggedIn={false} />);
+
+      // Click on ProfileButton
+      fireEvent.click(screen.getByTestId('profileButton'));
+      expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+
+      fireEvent.change(screen.getByPlaceholderText('Email'), {
+        target: { value: userValue.email },
+      });
+      fireEvent.change(screen.getByPlaceholderText('Password'), {
+        target: { value: userValue.password },
+      });
+      fireEvent.click(screen.getByDisplayValue('Sign in'));
+
+      await new Promise((r) => setTimeout(r, 1000));
+
+      expect(screen.queryByPlaceholderText('Email')).toBeNull();
+    });
   });
 
-  test('sign in correctly', async () => {
-    renderWithProviders(<Home isLoggedIn={false} />);
+  describe('SideMenu', () => {
+    test('SideMenu should appear when the profileButton is clicked and the user is logged in', () => {
+      renderWithProviders(<Home isLoggedIn={true} />);
 
-    // Click on ProfileButton
-    fireEvent.click(screen.getByTestId('profileButton'));
-    expect(screen.getByPlaceholderText('Email')).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('profileButton'));
 
-    fireEvent.change(screen.getByPlaceholderText('Email'), {
-      target: { value: userValue.email },
+      expect(screen.getByText('Profile Page')).toBeInTheDocument();
     });
-    fireEvent.change(screen.getByPlaceholderText('Password'), {
-      target: { value: userValue.password },
+
+    test('SideMenu should disappear if the X is clicked', () => {
+      renderWithProviders(<Home isLoggedIn={true} />);
+
+      fireEvent.click(screen.getByTestId('profileButton'));
+      expect(screen.getByText('Profile Page')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('X'));
+      expect(screen.queryByText('Profile Page')).not.toBeInTheDocument();
     });
-    fireEvent.click(screen.getByDisplayValue('Sign in'));
 
-    await new Promise((r) => setTimeout(r, 1000));
+    test('SideMenu should disappear if the overlay is clicked', () => {
+      renderWithProviders(<Home isLoggedIn={true} />);
 
-    expect(screen.queryByPlaceholderText('Email')).toBeNull();
+      fireEvent.click(screen.getByTestId('profileButton'));
+      expect(screen.getByText('Profile Page')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('overlay'));
+      expect(screen.queryByText('Profile Page')).not.toBeInTheDocument();
+    });
+
+    test('The SideMenu should disappear when the sign out button is clicked', async () => {
+      renderWithProviders(<Home isLoggedIn={true} />);
+
+      fireEvent.click(screen.getByTestId('profileButton'));
+      expect(screen.getByText('Profile Page')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByText('Sign Out'));
+
+      await new Promise((r) => setTimeout(r, 1000));
+
+      expect(screen.queryByText('Profile Page')).not.toBeInTheDocument();
+    });
   });
 
-  // test('register correctly', async () => {
+  // test.only('register correctly', async () => {
+  //   // const signUp = jest.fn();
+
   //   renderWithProviders(<Home isLoggedIn={false} />);
 
   //   // Click on ProfileButton
@@ -78,6 +125,12 @@ describe('Home', () => {
 
   //   await new Promise((r) => setTimeout(r, 1000));
 
-  //
+  //   expect(signUp).toHaveBeenCalledWith('hej', 'hej');
   // });
 });
+
+/*
+
+
+
+*/
