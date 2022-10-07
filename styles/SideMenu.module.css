@@ -1,0 +1,58 @@
+.container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20rem;
+  height: 100vh;
+  background-color: var(--lightBlue);
+  border-left: 3px solid var(--orange);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.container .exitBtn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  border: none;
+  height: 3.5rem;
+  width: 3.5rem;
+  font-size: 3rem;
+  font-family: 'Nunito';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  margin: 0.5rem 0.5rem;
+}
+
+.container .exitBtn:hover {
+  background-color: #005b7f;
+}
+
+.container .btnContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 15rem;
+}
+
+.btnContainer button {
+  background-color: transparent;
+  border: none;
+  margin: 0.5rem 0;
+  font-family: 'Norwester';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 43px;
+  border-radius: 5px;
+}
+
+.btnContainer button:hover {
+  background-color: #005b7f;
+}

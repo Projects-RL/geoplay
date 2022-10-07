@@ -37,6 +37,8 @@ export const handlers = [
     }
   ),
 
+  rest.post(`${process.env.NEXT_PULIC_SUPABASE_URL}/auth/v1/logout`, () => {}),
+
   // rest.post<string, Record<string, string>>(
   //   `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/signup?`,
   //   (req, res, ctx) => {
