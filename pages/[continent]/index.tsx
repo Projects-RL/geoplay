@@ -51,7 +51,7 @@ function GamePage({ dataToReturn }: Props) {
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
   // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  let hoveredCountryId = useRef<number | undefined>();
+  let hoveredCountryId = useRef<number>(0);
 
   const playerIsReady = useAppSelector((state: RootState) => {
     return state.gameOptions.ready;
@@ -138,7 +138,7 @@ function GamePage({ dataToReturn }: Props) {
         e.features;
 
       if (mapFeatures && mapFeatures.length > 0) {
-        if (hoveredCountryId.current && hoveredCountryId.current >= 0) {
+        if (hoveredCountryId.current >= 0) {
           map.current?.setFeatureState(
             { source: 'countries', id: hoveredCountryId.current },
             { hover: false }
@@ -155,14 +155,14 @@ function GamePage({ dataToReturn }: Props) {
       if (!map.current) return;
       map.current.getCanvas().style.cursor = '';
 
-      if (hoveredCountryId.current !== null) {
+      if (hoveredCountryId.current !== 0) {
         map.current.setFeatureState(
           { source: 'countries', id: hoveredCountryId.current },
           { hover: false }
         );
       }
 
-      hoveredCountryId.current = undefined;
+      hoveredCountryId.current = 0;
     });
     map.current.on('click', 'country-fills', (e: mouseMoveEvent) => {
       if (!countriesList) return;
@@ -191,15 +191,8 @@ function GamePage({ dataToReturn }: Props) {
     });
 
     populateCountries();
-  }, [
-    coords.lat,
-    coords.lng,
-    dataToReturn,
-    playerIsReady,
-    populateCountries,
-    router,
-    zoomLevel,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const index: number = clickedCountries.length;
@@ -253,6 +246,7 @@ function GamePage({ dataToReturn }: Props) {
       return;
     }
     if (correctClickedCountries.includes(pickedCountry.countryName)) {
+      console.log('finns redan');
       setAnswer('');
       colorCorrectCountry(index);
       return;
@@ -275,7 +269,7 @@ function GamePage({ dataToReturn }: Props) {
       );
     }
 
-    hoveredCountryId.current = undefined;
+    hoveredCountryId.current = 0;
     setAnswer('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);

@@ -19,7 +19,7 @@ function SmallMenu() {
   const router = useRouter();
   const [inputClick, setInputClick] = useState<boolean>(false);
   const [chosenCountry, setChosenCountry] = useState<string>('Europe');
-  const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
+  // const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function handleInputClick() {
