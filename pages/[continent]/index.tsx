@@ -13,6 +13,7 @@ import GameInfo from '../../components/GameInfo';
 import ReadyUp from '../../components/ReadyUp';
 import { useAppSelector } from '../../hooks/hooks';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import StatsModal from '../../components/StatsModal';
 
 interface Props {
   dataToReturn: QuizData;
@@ -50,7 +51,7 @@ function GamePage({ dataToReturn }: Props) {
   const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
-  // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  const [showStatsModal, setShowStatsModal] = useState<boolean>(true);
   let hoveredCountryId = useRef<number>(0);
 
   const playerIsReady = useAppSelector((state: RootState) => {
@@ -331,6 +332,7 @@ function GamePage({ dataToReturn }: Props) {
           gameIsOver={gameIsOver}
         />
       )}
+      {showStatsModal && <StatsModal />}
     </div>
   );
 }
