@@ -2,6 +2,8 @@ import React from 'react';
 import styles from '../styles/StatsModal.module.css';
 
 import { FaMapMarkedAlt, FaRegHourglass, FaStar } from 'react-icons/fa';
+import { useRouter } from 'next/router';
+import { stringConversion } from '../utils/helpers';
 
 interface Props {
   correctCountries: number;
@@ -10,6 +12,7 @@ interface Props {
 }
 
 function StatsModal({ correctCountries, allCountries, time }: Props) {
+  const router = useRouter();
   const minutes = ('0' + Math.floor((time / 60000) % 60)).slice(-2);
   const seconds = ('0' + Math.floor((time / 1000) % 60)).slice(-2);
 
@@ -18,9 +21,15 @@ function StatsModal({ correctCountries, allCountries, time }: Props) {
     .substring(0, 5)
     .replace('.', '');
 
-  const stringToOutput = scoreString.includes('0')
-    ? scoreString.replace('0', '')
-    : scoreString;
+  const stringToOutput = stringConversion(scoreString);
+
+  async function navigateToLeaderboards() {
+    console.log('go to Leaderboards');
+  }
+
+  async function navigateHome() {
+    await router.push('/');
+  }
 
   return (
     <div className={styles.container}>
@@ -44,9 +53,9 @@ function StatsModal({ correctCountries, allCountries, time }: Props) {
         <span>{stringToOutput}</span>
       </div>
       <div className={styles.btnContainer}>
-        <button>Play again</button>
-        <button>Leaderboards</button>
-        <button>Home</button>
+        {/* <button onClick={handlePlayAgain}>Play again</button> */}
+        <button onClick={navigateToLeaderboards}>Leaderboards</button>
+        <button onClick={navigateHome}>Home</button>
       </div>
     </div>
   );

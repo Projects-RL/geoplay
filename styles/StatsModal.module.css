@@ -60,6 +60,7 @@
 .container .btnContainer {
   display: flex;
   justify-content: space-between;
+  padding: 0 4rem;
 }
 
 .container button {
@@ -73,10 +74,6 @@
 }
 
 .container button:nth-child(1) {
-  font-size: 20px;
-}
-
-.container button:nth-child(2) {
   font-size: 16px;
 }
 
