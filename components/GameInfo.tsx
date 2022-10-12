@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import style from '../styles/GameInfo.module.css';
 
 interface Props {
   correctClickedCountries: string[];
   countriesList: string[];
   gameIsOver: boolean;
+  setFinalTime: Dispatch<SetStateAction<number>>;
+  setShowStatsModal: Dispatch<SetStateAction<boolean>>;
 }
 
 function GameInfo({
   correctClickedCountries,
   countriesList,
   gameIsOver,
+  setFinalTime,
+  setShowStatsModal,
 }: Props) {
   const [time, setTime] = useState<number>(0);
   const [timerOn, setTimerOn] = useState<boolean>(false);
@@ -38,6 +42,8 @@ function GameInfo({
 
   if (gameIsOver && timerOn) {
     setTimerOn(false);
+    setFinalTime(time);
+    setShowStatsModal(true);
   }
 
   return (

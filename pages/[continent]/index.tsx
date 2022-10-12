@@ -51,8 +51,9 @@ function GamePage({ dataToReturn }: Props) {
   const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
-  const [showStatsModal, setShowStatsModal] = useState<boolean>(true);
-  let hoveredCountryId = useRef<number>(0);
+  const [finalTime, setFinalTime] = useState<number>(0);
+  const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  let hoveredCountryId = useRef<number>(-1);
 
   const playerIsReady = useAppSelector((state: RootState) => {
     return state.gameOptions.ready;
@@ -137,9 +138,10 @@ function GamePage({ dataToReturn }: Props) {
     map.current?.on('mousemove', 'country-fills', (e: mouseMoveEvent) => {
       const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
         e.features;
+      if (hoveredCountryId.current === mapFeatures?.[0].id) return;
 
       if (mapFeatures && mapFeatures.length > 0) {
-        if (hoveredCountryId.current >= 0) {
+        if (hoveredCountryId.current > -1) {
           map.current?.setFeatureState(
             { source: 'countries', id: hoveredCountryId.current },
             { hover: false }
@@ -156,14 +158,14 @@ function GamePage({ dataToReturn }: Props) {
       if (!map.current) return;
       map.current.getCanvas().style.cursor = '';
 
-      if (hoveredCountryId.current !== 0) {
+      if (hoveredCountryId.current !== -1) {
         map.current.setFeatureState(
           { source: 'countries', id: hoveredCountryId.current },
           { hover: false }
         );
       }
 
-      hoveredCountryId.current = 0;
+      hoveredCountryId.current = -1;
     });
     map.current.on('click', 'country-fills', (e: mouseMoveEvent) => {
       if (!countriesList) return;
@@ -270,7 +272,7 @@ function GamePage({ dataToReturn }: Props) {
       );
     }
 
-    hoveredCountryId.current = 0;
+    hoveredCountryId.current = -1;
     setAnswer('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);
@@ -330,9 +332,17 @@ function GamePage({ dataToReturn }: Props) {
           correctClickedCountries={correctClickedCountries}
           countriesList={countriesList.current}
           gameIsOver={gameIsOver}
+          setFinalTime={setFinalTime}
+          setShowStatsModal={setShowStatsModal}
         />
       )}
-      {showStatsModal && <StatsModal />}
+      {showStatsModal && (
+        <StatsModal
+          allCountries={countriesList.current.length}
+          correctCountries={correctClickedCountries.length}
+          time={finalTime}
+        />
+      )}
     </div>
   );
 }
