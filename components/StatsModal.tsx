@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from '../styles/StatsModal.module.css';
-
 import { FaMapMarkedAlt, FaRegHourglass, FaStar } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import { stringConversion } from '../utils/helpers';
+import { handleReady } from '../redux/features/gameOptionsSlice';
+import { useAppDispatch } from '../hooks/hooks';
+import LoadingDots from './LoadingDots';
 
 interface Props {
   correctCountries: number;
@@ -13,6 +15,8 @@ interface Props {
 
 function StatsModal({ correctCountries, allCountries, time }: Props) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);
   const minutes = ('0' + Math.floor((time / 60000) % 60)).slice(-2);
   const seconds = ('0' + Math.floor((time / 1000) % 60)).slice(-2);
 
@@ -24,10 +28,14 @@ function StatsModal({ correctCountries, allCountries, time }: Props) {
   const stringToOutput = stringConversion(scoreString);
 
   async function navigateToLeaderboards() {
-    console.log('go to Leaderboards');
+    setIsLoading(true);
+    dispatch(handleReady(false));
+    await router.push('/leaderboards');
   }
 
   async function navigateHome() {
+    setIsLoading(true);
+    dispatch(handleReady(false));
     await router.push('/');
   }
 
@@ -54,8 +62,12 @@ function StatsModal({ correctCountries, allCountries, time }: Props) {
       </div>
       <div className={styles.btnContainer}>
         {/* <button onClick={handlePlayAgain}>Play again</button> */}
-        <button onClick={navigateToLeaderboards}>Leaderboards</button>
-        <button onClick={navigateHome}>Home</button>
+        <button onClick={navigateToLeaderboards}>
+          {isLoading ? <LoadingDots /> : <>Leaderboards</>}
+        </button>
+        <button onClick={navigateHome}>
+          {isLoading ? <LoadingDots /> : <>Home</>}
+        </button>
       </div>
     </div>
   );
