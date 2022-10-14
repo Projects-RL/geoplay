@@ -302,9 +302,6 @@ function GamePage({ dataToReturn }: Props) {
       countriesList.current.length === clickedCountries.length
     ) {
       if (gameIsOver) return;
-
-      console.log('spelet är slut');
-      console.log('rätta svar', correctClickedCountries.length);
       setGameIsOver(true);
     }
   }
@@ -341,6 +338,7 @@ function GamePage({ dataToReturn }: Props) {
           allCountries={countriesList.current.length}
           correctCountries={correctClickedCountries.length}
           time={finalTime}
+          setGameStarted={setGameStarted}
         />
       )}
     </div>

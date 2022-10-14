@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styles from '../styles/StatsModal.module.css';
 import { FaMapMarkedAlt, FaRegHourglass, FaStar } from 'react-icons/fa';
 import { useRouter } from 'next/router';
@@ -11,14 +11,25 @@ interface Props {
   correctCountries: number;
   allCountries: number;
   time: number;
+  setGameStarted: Dispatch<SetStateAction<boolean>>;
 }
 
-function StatsModal({ correctCountries, allCountries, time }: Props) {
+function StatsModal({
+  correctCountries,
+  allCountries,
+  time,
+  setGameStarted,
+}: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const minutes = ('0' + Math.floor((time / 60000) % 60)).slice(-2);
   const seconds = ('0' + Math.floor((time / 1000) % 60)).slice(-2);
+
+  useEffect(() => {
+    setGameStarted(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const scoreString = (correctCountries / Math.floor(time / 1000))
     .toString()
