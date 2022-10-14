@@ -1,7 +1,8 @@
 import { screen, fireEvent } from '@testing-library/react';
 import SmallMenu from '../components/SmallMenu';
 import '@testing-library/jest-dom';
-import { renderWithProviders } from '../utils/test-utils';
+import { renderWithProviders } from '../test-utils/renderWithProviders';
+// import { renderWithProviders } from '../utils/test-utils';
 
 jest.mock('next/router', () => ({ __esModule: true, useRouter: jest.fn() }));
 

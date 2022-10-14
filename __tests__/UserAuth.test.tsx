@@ -1,8 +1,8 @@
 import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { server } from '../mocks/server';
-import { renderWithProviders } from '../utils/test-utils';
 import UserAuth from '../components/UserAuth';
+import { renderWithProviders } from '../test-utils/renderWithProviders';
 
 describe('Home', () => {
   beforeAll(() => {

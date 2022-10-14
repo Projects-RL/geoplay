@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { renderWithProviders } from '../utils/test-utils';
 import SideMenu from '../components/SideMenu';
+import { renderWithProviders } from '../test-utils/renderWithProviders';
 
 describe('SideMenu', () => {
   test('SideMenu should render the correct buttons', () => {

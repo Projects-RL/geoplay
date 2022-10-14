@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import StatsModal from '../components/StatsModal';
-import { renderWithProviders } from '../utils/test-utils';
 import { stringConversion } from '../utils/helpers';
 import { createMockRouter } from '../test-utils/createMockRouter';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
+import { renderWithProviders } from '../test-utils/renderWithProviders';
 
 describe('StatsModal', () => {
   const router = createMockRouter({});
