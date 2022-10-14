@@ -1,0 +1,83 @@
+.container {
+  position: absolute;
+  width: 500px;
+  /* height: 550px; */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--lightBlue);
+  border-radius: 10px;
+  border: 4px solid var(--orange);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 2rem;
+  z-index: 10;
+}
+.container h1 {
+  color: var(--yellow);
+  margin: 0;
+  text-decoration: underline;
+  text-decoration-color: var(--orange);
+  font-family: 'Norwester';
+
+  font-style: normal;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 49px;
+}
+.container p {
+  font-family: 'Nunito';
+  font-weight: 500;
+  width: 100%;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 30px;
+}
+
+.container div {
+  width: 100%;
+}
+.container .icon {
+  color: var(--yellow);
+  font-size: 2.5rem;
+  margin-right: 1rem;
+}
+
+.container .scoreContainer {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  height: 3rem;
+}
+
+.scoreContainer span {
+  font-size: 2rem;
+  font-family: 'Nunito';
+  color: var(--yellow);
+}
+
+.container .btnContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4rem;
+}
+
+.container button {
+  width: 110px;
+  height: 45px;
+  background: #006992;
+  border: 2px solid #eaf8bf;
+  border-radius: 10px;
+  font-size: 26px;
+  transition: all 0.2s;
+}
+
+.container button:nth-child(1) {
+  font-size: 16px;
+}
+
+.container button:hover {
+  background-color: #eaf8bf;
+  color: #006992;
+}
