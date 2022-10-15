@@ -44,6 +44,8 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
     }
   }
 
+  console.log({ showSideMenu });
+
   return (
     <>
       <Head>
@@ -61,7 +63,7 @@ const Home: NextPage<Props> = ({ isLoggedIn }: Props) => {
         </button>
 
         {showSignIn && <UserAuth />}
-        {showSideMenu && <SideMenu />}
+        {showSideMenu && <SideMenu page="Home" />}
         {(showSignIn || showSideMenu) && <Overlay />}
         <section className={style.header}>
           <h1>

@@ -9,11 +9,14 @@ import type { GetStaticProps } from 'next';
 import type { RootState } from '../../redux/store';
 import Objective from '../../components/Objective';
 import Countdown from '../../components/Countdown';
+import GameStats from '../../components/GameStats';
 import GameInfo from '../../components/GameInfo';
-import ReadyUp from '../../components/ReadyUp';
-import { useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import StatsModal from '../../components/StatsModal';
+import { CgProfile } from 'react-icons/cg';
+import SideMenu from '../../components/SideMenu';
+import { handleShowSideMenu } from '../../redux/features/componentHandlingSlice';
 
 interface Props {
   dataToReturn: QuizData;
@@ -27,6 +30,7 @@ interface ICountry {
 }
 
 function GamePage({ dataToReturn }: Props) {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -45,7 +49,11 @@ function GamePage({ dataToReturn }: Props) {
   const zoomLevel = useAppSelector((state: RootState) => {
     return state.gameOptions.zoom;
   });
+  const showSideMenu = useAppSelector((state: RootState) => {
+    return state.componentHandling.showSideMenu;
+  });
 
+  const [showGameInfo, setShowGameInfo] = useState(false);
   const [playerHasClickedReady, setPlayerHasClickedReady] =
     useState<boolean>(false);
   const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
@@ -308,13 +316,31 @@ function GamePage({ dataToReturn }: Props) {
 
   return (
     <div ref={mapContainer} className={styles.container}>
+      <button
+        className={styles.profileButton}
+        onClick={() => dispatch(handleShowSideMenu(true))}
+        data-testid="profileButton"
+      >
+        <CgProfile />
+      </button>
+
+      {showSideMenu && (
+        <SideMenu
+          page="Game"
+          playerHasClickedReady={playerHasClickedReady}
+          setShowGameInfo={setShowGameInfo}
+        />
+      )}
+
       {typeof iteration === 'number' && gameStarted && !gameIsOver && (
         <Objective objective={countriesList.current[iteration]} />
       )}
-      {!playerHasClickedReady && (
-        <ReadyUp
+      {(!playerHasClickedReady || showGameInfo) && (
+        <GameInfo
           setPlayerHasClickedReady={setPlayerHasClickedReady}
           setCountdownStarted={setCountdownStarted}
+          showGameInfo={showGameInfo}
+          setShowGameInfo={setShowGameInfo}
         />
       )}
       {countdownStarted && (
@@ -325,7 +351,7 @@ function GamePage({ dataToReturn }: Props) {
       )}
       {!gameStarted && <div className={styles.overlay}></div>}
       {gameStarted && (
-        <GameInfo
+        <GameStats
           correctClickedCountries={correctClickedCountries}
           countriesList={countriesList.current}
           gameIsOver={gameIsOver}

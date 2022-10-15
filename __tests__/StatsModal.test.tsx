@@ -74,7 +74,7 @@ describe('StatsModal', () => {
     expect(router.push).toHaveBeenCalledWith('/');
   });
 
-  test('that setGameStarted is called with false to ensure that the gameInfo component disappears', () => {
+  test('that setGameStarted is called with false to ensure that the GameStats component disappears', () => {
     renderWithProviders(<StatsModal {...props} />);
 
     expect(props.setGameStarted).toBeCalledWith(false);

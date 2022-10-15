@@ -66,7 +66,7 @@ describe('Home', () => {
       expect(screen.getByText('Profile Page')).toBeInTheDocument();
     });
 
-    test('SideMenu should disappear if the X is clicked', () => {
+    test.only('SideMenu should disappear if the X is clicked', () => {
       renderWithProviders(<Home isLoggedIn={true} />);
 
       fireEvent.click(screen.getByTestId('profileButton'));
