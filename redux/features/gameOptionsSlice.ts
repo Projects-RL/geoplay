@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { Coords, GameOptions } from "../../interfaces";
+import { createSlice } from '@reduxjs/toolkit';
+import { Coords, GameOptions } from '../../interfaces';
 
 const initialState: GameOptions = {
-  continent: "europe",
-  gameMode: "countries",
+  continent: 'europe',
+  gameMode: 'countries',
   ready: false,
   coordinates: {
     lat: 54.46903342326635,
@@ -13,15 +13,12 @@ const initialState: GameOptions = {
 };
 
 export const gameOptionsSlice = createSlice({
-  name: "gameOptions",
+  name: 'gameOptions',
   initialState,
   reducers: {
     continentPick: (state, action: { payload: string }) => {
       state.continent = action.payload;
     },
-    // gameModePick: (state, action: { payload: string }) => {
-    //   state.gameMode = action.payload;
-    // },
     handleReady: (state, action: { payload: boolean }) => {
       state.ready = action.payload;
     },
@@ -34,12 +31,7 @@ export const gameOptionsSlice = createSlice({
   },
 });
 
-export const {
-  continentPick,
-  //   gameModePick,
-  handleReady,
-  handleCoords,
-  handleZoom,
-} = gameOptionsSlice.actions;
+export const { continentPick, handleReady, handleCoords, handleZoom } =
+  gameOptionsSlice.actions;
 
 export default gameOptionsSlice.reducer;

@@ -9,7 +9,7 @@ describe('MenuButtons', () => {
 
     const menuBtns = screen.getAllByRole('button');
 
-    expect(menuBtns.length).toBe(3);
+    expect(menuBtns.length).toBe(2);
   });
 
   test('At initial rendering, the submenu should be hidden', () => {

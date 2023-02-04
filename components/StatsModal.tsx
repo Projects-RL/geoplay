@@ -72,7 +72,6 @@ function StatsModal({
         <span>{stringToOutput}</span>
       </div>
       <div className={styles.btnContainer}>
-        {/* <button onClick={handlePlayAgain}>Play again</button> */}
         <button onClick={navigateToLeaderboards}>
           {isLoading ? <LoadingDots /> : <>Leaderboards</>}
         </button>
