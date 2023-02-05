@@ -38,12 +38,6 @@ function StatsModal({
 
   const stringToOutput = stringConversion(scoreString);
 
-  async function navigateToLeaderboards() {
-    setIsLoading(true);
-    dispatch(handleReady(false));
-    await router.push('/leaderboards');
-  }
-
   async function navigateHome() {
     setIsLoading(true);
     dispatch(handleReady(false));
@@ -71,14 +65,9 @@ function StatsModal({
         <FaStar className={styles.icon} />
         <span>{stringToOutput}</span>
       </div>
-      <div className={styles.btnContainer}>
-        <button onClick={navigateToLeaderboards}>
-          {isLoading ? <LoadingDots /> : <>Leaderboards</>}
-        </button>
-        <button onClick={navigateHome}>
-          {isLoading ? <LoadingDots /> : <>Home</>}
-        </button>
-      </div>
+      <button onClick={navigateHome}>
+        {isLoading ? <LoadingDots /> : <>Home</>}
+      </button>
     </div>
   );
 }

@@ -14,7 +14,7 @@ import GameInfo from '../../components/GameInfo';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 import StatsModal from '../../components/StatsModal';
-import { CgProfile } from 'react-icons/cg';
+import { BiMenu } from 'react-icons/bi';
 import SideMenu from '../../components/SideMenu';
 import { handleShowSideMenu } from '../../redux/features/componentHandlingSlice';
 
@@ -321,7 +321,7 @@ function GamePage({ dataToReturn }: Props) {
         onClick={() => dispatch(handleShowSideMenu(true))}
         data-testid="profileButton"
       >
-        <CgProfile />
+        <BiMenu />
       </button>
 
       {showSideMenu && (
