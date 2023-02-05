@@ -56,3 +56,12 @@
 .btnContainer button:hover {
   background-color: #005b7f;
 }
+
+.container .disabledBtn {
+  color: #eaf8bf49;
+}
+
+.container .disabledBtn:hover {
+  background-color: transparent;
+  cursor: default;
+}

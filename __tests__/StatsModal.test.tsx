@@ -21,9 +21,6 @@ describe('StatsModal', () => {
     expect(
       screen.getByRole('heading', { name: "You're done!" })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Leaderboards' })
-    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Home' })).toBeInTheDocument();
   });
 
@@ -52,17 +49,6 @@ describe('StatsModal', () => {
     expect(screen.getByText(expectedScore)).toBeInTheDocument();
   });
 
-  test('that the Leaderboards button is redirecting the user', () => {
-    renderWithProviders(
-      <RouterContext.Provider value={router}>
-        <StatsModal {...props} />
-      </RouterContext.Provider>
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'Leaderboards' }));
-    expect(router.push).toHaveBeenCalledWith('/leaderboards');
-  });
-
   test('that the Home button is redirecting the user', () => {
     renderWithProviders(
       <RouterContext.Provider value={router}>
@@ -74,7 +60,7 @@ describe('StatsModal', () => {
     expect(router.push).toHaveBeenCalledWith('/');
   });
 
-  test('that setGameStarted is called with false to ensure that the gameInfo component disappears', () => {
+  test('that setGameStarted is called with false to ensure that the GameStats component disappears', () => {
     renderWithProviders(<StatsModal {...props} />);
 
     expect(props.setGameStarted).toBeCalledWith(false);
