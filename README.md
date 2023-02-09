@@ -15,17 +15,18 @@ I wanted to make a fun small game that challenges the users geographic knowledge
 - Mapbox
 - Redux
 - React Icons
+- MongoDB
 
 ## Run Locally
 
 ```sh
-$ git clone https://github.com/RobinLans/tic-tac-toe-online.git
+$ git clone https://github.com/RobinLans/geoplay.git
 ```
 
 ```sh
-$ npm install
+$ yarn install
 ```
 
 ```sh
-$ npm run dev
+$ yarn dev
 ```
