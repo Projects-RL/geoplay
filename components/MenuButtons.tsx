@@ -1,11 +1,16 @@
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import style from '../styles/MenuButtons.module.css';
 import SmallMenu from './SmallMenu';
 
 function MenuButtons() {
   const [activeBtn, setActiveBtn] = useState<string>('');
+  const router = useRouter();
 
   const handleActiveBtn = (label: string) => () => {
+    if (label === 'Info') {
+      router.push('/info');
+    }
     if (activeBtn === 'Play') {
       setActiveBtn('');
     } else {

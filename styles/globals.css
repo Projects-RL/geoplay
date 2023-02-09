@@ -27,7 +27,8 @@ a {
   text-decoration: none;
 }
 
-p {
+p,
+a {
   font-family: 'Norwester';
   font-style: normal;
   font-weight: 400;
