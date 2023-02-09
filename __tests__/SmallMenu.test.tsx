@@ -1,7 +1,7 @@
 import { screen, fireEvent } from '@testing-library/react';
 import SmallMenu from '../components/SmallMenu';
 import '@testing-library/jest-dom';
-import { renderWithProviders } from '../utils/test-utils';
+import { renderWithProviders } from '../test-utils/renderWithProviders';
 
 jest.mock('next/router', () => ({ __esModule: true, useRouter: jest.fn() }));
 
@@ -46,18 +46,4 @@ describe('SmallMenu', () => {
 
     expect(inputDiv).toHaveTextContent('Asia');
   });
-
-  // test('that a new page is rendered when the "Ready" button is clicked', () => {
-  //     const mockRouter = {
-  //         push: jest.fn(), // the component uses `router.push` only
-  //     };
-  //     render(<MockSmallMenu />);
-
-  //     const readyButton = screen.getByText("Ready");
-  //     fireEvent.click(readyButton);
-
-  //     (useRouter as jest.Mock).mockReturnValue(mockRouter);
-
-  //     expect(mockRouter.push).toHaveBeenCalledWith("/europe");
-  // });
 });

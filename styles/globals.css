@@ -27,7 +27,8 @@ a {
   text-decoration: none;
 }
 
-p {
+p,
+a {
   font-family: 'Norwester';
   font-style: normal;
   font-weight: 400;
@@ -47,4 +48,17 @@ button:hover {
 
 * {
   box-sizing: border-box;
+}
+
+.alertContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.alert {
+  width: 80%;
 }

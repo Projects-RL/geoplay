@@ -19,7 +19,6 @@ function SmallMenu() {
   const router = useRouter();
   const [inputClick, setInputClick] = useState<boolean>(false);
   const [chosenCountry, setChosenCountry] = useState<string>('Europe');
-  // const [countriesToggled, setCountriesToggled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   function handleInputClick() {
@@ -31,10 +30,6 @@ function SmallMenu() {
   function handleChosenCountry(name: string, coords: Coords, zoom: number) {
     setChosenCountry(name);
     setInputClick(false);
-
-    // const stateToStore = name.toLocaleLowerCase().replace(" ", "");
-
-    // dispatch(continentPick(stateToStore));
     dispatch(continentPick(name));
     dispatch(handleCoords(coords));
     dispatch(handleZoom(zoom));
@@ -76,25 +71,6 @@ function SmallMenu() {
           }}
         ></div>
       )}
-
-      {/* <div className={style.toggleBtns}>
-        <button
-          className={countriesToggled ? `${style.toggled}` : ""}
-          onClick={() => {
-            setCountriesToggled(true);
-          }}
-        >
-          Countries
-        </button>
-        <button
-          className={!countriesToggled ? `${style.toggled}` : ""}
-          onClick={() => {
-            setCountriesToggled(false);
-          }}
-        >
-          Capitals
-        </button>
-      </div> */}
 
       <button className={style.readyBtn} onClick={goToPlayPage}>
         {isLoading ? <LoadingDots /> : <>Ready</>}

@@ -1,0 +1,53 @@
+.container {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 410px;
+  height: 103px;
+  filter: drop-shadow(4px 10px 4px rgba(0, 0, 0, 0.5));
+  background: var(--lightBlue);
+  border-radius: 10px;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  font-family: 'Norwester';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 58px;
+  color: var(--yellow);
+  z-index: 10;
+}
+
+.container .correctAnswers {
+  width: 204px;
+  display: flex;
+  justify-content: center;
+}
+
+.container .divider {
+  background-color: var(--orange);
+  width: 2px;
+  height: 81px;
+}
+
+.container .timer {
+  width: 204px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container .slash {
+  margin: 0 0.5rem;
+}
+
+.container .number {
+  width: 3rem;
+  text-align: center;
+}
+
+.container .colon {
+  margin-bottom: 1rem;
+}

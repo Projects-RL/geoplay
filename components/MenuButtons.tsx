@@ -1,13 +1,18 @@
-import React, { useState } from "react";
-import style from "../styles/MenuButtons.module.css";
-import SmallMenu from "./SmallMenu";
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import style from '../styles/MenuButtons.module.css';
+import SmallMenu from './SmallMenu';
 
 function MenuButtons() {
-  const [activeBtn, setActiveBtn] = useState<string>("");
+  const [activeBtn, setActiveBtn] = useState<string>('');
+  const router = useRouter();
 
   const handleActiveBtn = (label: string) => () => {
-    if (activeBtn === "Play") {
-      setActiveBtn("");
+    if (label === 'Info') {
+      router.push('/info');
+    }
+    if (activeBtn === 'Play') {
+      setActiveBtn('');
     } else {
       setActiveBtn(label);
     }
@@ -15,23 +20,17 @@ function MenuButtons() {
   return (
     <section className={style.mainMenuBtns}>
       <button
-        onClick={handleActiveBtn("Play")}
+        onClick={handleActiveBtn('Play')}
         className={
-          activeBtn === "Play"
+          activeBtn === 'Play'
             ? `${style.active} ${style.menuBtn}`
             : `${style.menuBtn}`
         }
       >
         Play
       </button>
-      {activeBtn === "Play" && <SmallMenu />}
-      <button
-        className={style.menuBtn}
-        onClick={handleActiveBtn("Leaderboards")}
-      >
-        Leaderboards
-      </button>
-      <button className={style.menuBtn} onClick={handleActiveBtn("Info")}>
+      {activeBtn === 'Play' && <SmallMenu />}
+      <button className={style.menuBtn} onClick={handleActiveBtn('Info')}>
         Info
       </button>
     </section>

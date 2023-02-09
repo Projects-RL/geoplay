@@ -9,10 +9,14 @@ import type { GetStaticProps } from 'next';
 import type { RootState } from '../../redux/store';
 import Objective from '../../components/Objective';
 import Countdown from '../../components/Countdown';
+import GameStats from '../../components/GameStats';
 import GameInfo from '../../components/GameInfo';
-import ReadyUp from '../../components/ReadyUp';
-import { useAppSelector } from '../../hooks/hooks';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
+import StatsModal from '../../components/StatsModal';
+import { BiMenu } from 'react-icons/bi';
+import SideMenu from '../../components/SideMenu';
+import { handleShowSideMenu } from '../../redux/features/componentHandlingSlice';
 
 interface Props {
   dataToReturn: QuizData;
@@ -26,6 +30,7 @@ interface ICountry {
 }
 
 function GamePage({ dataToReturn }: Props) {
+  const dispatch = useAppDispatch();
   const router = useRouter();
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
@@ -44,14 +49,19 @@ function GamePage({ dataToReturn }: Props) {
   const zoomLevel = useAppSelector((state: RootState) => {
     return state.gameOptions.zoom;
   });
+  const showSideMenu = useAppSelector((state: RootState) => {
+    return state.componentHandling.showSideMenu;
+  });
 
+  const [showGameInfo, setShowGameInfo] = useState(false);
   const [playerHasClickedReady, setPlayerHasClickedReady] =
     useState<boolean>(false);
   const [countdownStarted, setCountdownStarted] = useState<boolean>(false);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameIsOver, setGameIsOver] = useState<boolean>(false);
-  // const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
-  let hoveredCountryId = useRef<number>(0);
+  const [finalTime, setFinalTime] = useState<number>(0);
+  const [showStatsModal, setShowStatsModal] = useState<boolean>(false);
+  let hoveredCountryId = useRef<number>(-1);
 
   const playerIsReady = useAppSelector((state: RootState) => {
     return state.gameOptions.ready;
@@ -136,9 +146,10 @@ function GamePage({ dataToReturn }: Props) {
     map.current?.on('mousemove', 'country-fills', (e: mouseMoveEvent) => {
       const mapFeatures: mapboxgl.MapboxGeoJSONFeature[] | undefined =
         e.features;
+      if (hoveredCountryId.current === mapFeatures?.[0].id) return;
 
       if (mapFeatures && mapFeatures.length > 0) {
-        if (hoveredCountryId.current >= 0) {
+        if (hoveredCountryId.current > -1) {
           map.current?.setFeatureState(
             { source: 'countries', id: hoveredCountryId.current },
             { hover: false }
@@ -155,14 +166,14 @@ function GamePage({ dataToReturn }: Props) {
       if (!map.current) return;
       map.current.getCanvas().style.cursor = '';
 
-      if (hoveredCountryId.current !== 0) {
+      if (hoveredCountryId.current !== -1) {
         map.current.setFeatureState(
           { source: 'countries', id: hoveredCountryId.current },
           { hover: false }
         );
       }
 
-      hoveredCountryId.current = 0;
+      hoveredCountryId.current = -1;
     });
     map.current.on('click', 'country-fills', (e: mouseMoveEvent) => {
       if (!countriesList) return;
@@ -269,7 +280,7 @@ function GamePage({ dataToReturn }: Props) {
       );
     }
 
-    hoveredCountryId.current = 0;
+    hoveredCountryId.current = -1;
     setAnswer('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer]);
@@ -299,22 +310,37 @@ function GamePage({ dataToReturn }: Props) {
       countriesList.current.length === clickedCountries.length
     ) {
       if (gameIsOver) return;
-
-      console.log('spelet är slut');
-      console.log('rätta svar', correctClickedCountries.length);
       setGameIsOver(true);
     }
   }
 
   return (
     <div ref={mapContainer} className={styles.container}>
+      <button
+        className={styles.profileButton}
+        onClick={() => dispatch(handleShowSideMenu(true))}
+        data-testid="profileButton"
+      >
+        <BiMenu />
+      </button>
+
+      {showSideMenu && (
+        <SideMenu
+          page="Game"
+          playerHasClickedReady={playerHasClickedReady}
+          setShowGameInfo={setShowGameInfo}
+        />
+      )}
+
       {typeof iteration === 'number' && gameStarted && !gameIsOver && (
         <Objective objective={countriesList.current[iteration]} />
       )}
-      {!playerHasClickedReady && (
-        <ReadyUp
+      {(!playerHasClickedReady || showGameInfo) && (
+        <GameInfo
           setPlayerHasClickedReady={setPlayerHasClickedReady}
           setCountdownStarted={setCountdownStarted}
+          showGameInfo={showGameInfo}
+          setShowGameInfo={setShowGameInfo}
         />
       )}
       {countdownStarted && (
@@ -325,10 +351,20 @@ function GamePage({ dataToReturn }: Props) {
       )}
       {!gameStarted && <div className={styles.overlay}></div>}
       {gameStarted && (
-        <GameInfo
+        <GameStats
           correctClickedCountries={correctClickedCountries}
           countriesList={countriesList.current}
           gameIsOver={gameIsOver}
+          setFinalTime={setFinalTime}
+          setShowStatsModal={setShowStatsModal}
+        />
+      )}
+      {showStatsModal && (
+        <StatsModal
+          allCountries={countriesList.current.length}
+          correctCountries={correctClickedCountries.length}
+          time={finalTime}
+          setGameStarted={setGameStarted}
         />
       )}
     </div>

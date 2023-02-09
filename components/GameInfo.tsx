@@ -1,67 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import style from '../styles/GameInfo.module.css';
+import { RootState } from '../redux/store';
+import { useAppSelector } from '../hooks/hooks';
 
 interface Props {
-  correctClickedCountries: string[];
-  countriesList: string[];
-  gameIsOver: boolean;
+  setPlayerHasClickedReady: (playerHasClickedReady: boolean) => void;
+  setCountdownStarted: (countdownStarted: boolean) => void;
+  showGameInfo: boolean;
+  setShowGameInfo: (showGameInfo: boolean) => void;
 }
 
 function GameInfo({
-  correctClickedCountries,
-  countriesList,
-  gameIsOver,
+  setPlayerHasClickedReady,
+  setCountdownStarted,
+  showGameInfo,
+  setShowGameInfo,
 }: Props) {
-  const [time, setTime] = useState<number>(0);
-  const [timerOn, setTimerOn] = useState<boolean>(false);
+  const continent = useAppSelector((state: RootState) => {
+    return state.gameOptions.continent;
+  });
 
-  useEffect(() => {
-    if (timerOn) return;
-    setTimerOn(true);
-  }, [timerOn]);
+  function handleStart() {
+    setPlayerHasClickedReady(true);
+    setCountdownStarted(true);
+  }
 
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | undefined;
-
-    if (timerOn) {
-      interval = setInterval(() => {
-        setTime((prevTime) => {
-          return prevTime + 10;
-        });
-      }, 10);
-    } else {
-      clearInterval(interval);
-    }
-
-    return () => clearInterval(interval);
-  }, [timerOn]);
-
-  if (gameIsOver && timerOn) {
-    setTimerOn(false);
+  function handleClose() {
+    setShowGameInfo(false);
   }
 
   return (
-    <section className={style.container}>
-      <div className={style.correctAnswers}>
-        <span>{correctClickedCountries.length}</span>
-        <span className={style.slash}>/</span>
-        <span>{countriesList.length}</span>
-      </div>
-      <div className={style.divider}></div>
-      <div className={style.timer}>
-        <span className={style.number}>
-          {('0' + Math.floor((time / 60000) % 60)).slice(-2)}
-        </span>
-        <span className={style.colon}>:</span>
-        <span className={style.number}>
-          {('0' + Math.floor((time / 1000) % 60)).slice(-2)}
-        </span>
-        <span className={style.colon}>:</span>
-        <span className={style.number}>
-          {('0' + ((time / 10) % 100)).slice(-2)}
-        </span>
-      </div>
-    </section>
+    <div className={style.container}>
+      <h1>{continent}</h1>
+      <p>
+        Click on the correct countries as quick as possible, you only have 1
+        chance per country.
+      </p>
+      <p>
+        When Every country has been displayed the timer is stopped and your
+        final score is calculated.
+      </p>
+      {!showGameInfo && <p>When you are ready, click on Start, Good luck!</p>}
+      {showGameInfo ? (
+        <button onClick={handleClose}>Close</button>
+      ) : (
+        <button onClick={handleStart}>Start</button>
+      )}
+    </div>
   );
 }
 
